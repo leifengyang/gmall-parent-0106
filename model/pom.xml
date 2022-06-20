@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>gmall-parent</artifactId>
+        <groupId>com.atguigu.gmall</groupId>
+        <version>1.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>model</artifactId>
+    <description>所有的模型，JavaBean。
+    领域对象：VO、TO、DO、DAO、DTO、PO、POJO、BO（基于领域对象模型的设计）
+        VO：View Object,Value Object：和前端交互的对象。（给前端响应json，前端提交的数据封装到对象中）
+        TO：Transfer Object： 传输对象（南北向的就是controller--service---dao参数，东西向：远程调用用的参数、发送的消息）
+        DO：Data Object，Database Object：封装数据库查出的数据，或者给数据库传的参数。
+        DAO： Database Access Object： 访问数据库的对象。 xxxMapper
+        PO： Persistence Object：持久化对象，DO； 需要持久化保存的对象
+        POJO：Plain Ordinary Java Object； 普通的JavaBean
+        BO： Business Object；业务对象。 针对一些业务的对象。
+        ....
+
+        一个O，从前到后。
+        class User{
+          private String name,passwd,email;
+          private Integer age; //...
+        }
+
+        O要分层明确。
+        最起码有这几个领域：
+            VO： name，email。             UserVO（name,email）
+            DO： 数据库层的JavaBean         UserDo（id,name,passwd,email,age）
+            TO： 传输用的。微服务之间的调用。  UserTo（id,name）
+        BeanUtils工具把 DO 中的值 Copy到 TO 中
+        DDD（领域驱动设计）；
+    </description>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+
+        <!--mybatis-plus-->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--swagger-->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+
+
+
+
+
+</project>
