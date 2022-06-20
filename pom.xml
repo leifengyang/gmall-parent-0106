@@ -10,7 +10,7 @@
         <module>server-gateway</module>
     </modules>
 
-    <!--    springboot作为整个父项目 -->
+    <!--    springboot作为整个父项目哈哈哈 -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
