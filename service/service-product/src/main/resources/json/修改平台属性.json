@@ -1,0 +1,30 @@
+{
+  "id": 12,
+  "attrName": "出厂的日期222",
+  "category1Id": 0,
+  "category2Id": 0,
+  "category3Id": 0,
+  "attrValueList": [
+    {
+      "id": 60,
+      "valueName": "2021aa",
+      "attrId": 12,
+      "edit": false
+    },
+    {
+      "id": 61,
+      "valueName": "2022",
+      "attrId": 12
+    },
+    {
+      "valueName": "bbbb",
+      "edit": false
+    },
+    {
+      "valueName": "cccc",
+      "edit": false
+    }
+  ],
+  "categoryId": 2,
+  "categoryLevel": 1
+}

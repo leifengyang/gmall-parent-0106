@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.gmall.product.mapper.BaseAttrInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.atguigu.gmall.model.product.BaseAttrInfo">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="attrName" column="attr_name" jdbcType="VARCHAR"/>
+        <result property="categoryId" column="category_id" jdbcType="BIGINT"/>
+        <result property="categoryLevel" column="category_level" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--    自定义属性名和值封装的结果集-->
+    <resultMap id="AttrAndValueResultMap" type="com.atguigu.gmall.model.product.BaseAttrInfo"
+               autoMapping="true">
+        <!--        标识唯一对象-->
+        <id column="id" property="id"></id>
+<!--        <result property="attrName" column="attr_name" ></result>-->
+<!--        <result property="categoryId" column="category_id"></result>-->
+<!--        <result property="categoryLevel" column="category_level"></result>-->
+        <!--       集合封装的时候要区分属于哪个对象的集合 -->
+        <collection property="attrValueList" ofType="com.atguigu.gmall.model.product.BaseAttrValue" autoMapping="true">
+            <!--    集合元素之间也有唯一区分      -->
+            <id property="id" column="vid"></id>
+<!--            <result property="valueName" column="value_name"></result>-->
+<!--            <result property="attrId" column="attr_id"></result>-->
+        </collection>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        ,attr_name,category_id,
+        category_level
+    </sql>
+
+
+    <select id="getBaseAttrInfoWithValue" resultMap="AttrAndValueResultMap">
+        select bai.*, bav.id vid, bav.value_name value_name, bav.attr_id attr_id
+        from base_attr_info bai
+        left join base_attr_value bav on bai.id = bav.attr_id
+        <where>
+            <if test="c1Id != 0">
+                (bai.category_id = #{c1Id} and bai.category_level = 1)
+            </if>
+            <if test="c2Id != 0">
+                or (bai.category_id = #{c2Id} and bai.category_level = 2)
+            </if>
+            <if test="c3Id != 0">
+                or (bai.category_id = #{c3Id} and bai.category_level = 3)
+            </if>
+        </where>
+
+    </select>
+</mapper>

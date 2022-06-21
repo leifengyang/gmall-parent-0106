@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ import java.util.List;
  * </p>
  *
  */
+@ToString
 @Data
 @ApiModel(description = "平台属性")
 @TableName("base_attr_info")

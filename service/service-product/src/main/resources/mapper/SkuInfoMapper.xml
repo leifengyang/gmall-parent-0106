@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.gmall.product.mapper.SkuInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.atguigu.gmall.model.product.SkuInfo">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="spuId" column="spu_id" jdbcType="BIGINT"/>
+            <result property="price" column="price" jdbcType="DECIMAL"/>
+            <result property="skuName" column="sku_name" jdbcType="VARCHAR"/>
+            <result property="skuDesc" column="sku_desc" jdbcType="VARCHAR"/>
+            <result property="weight" column="weight" jdbcType="DECIMAL"/>
+            <result property="tmId" column="tm_id" jdbcType="BIGINT"/>
+            <result property="category3Id" column="category3_id" jdbcType="BIGINT"/>
+            <result property="skuDefaultImg" column="sku_default_img" jdbcType="VARCHAR"/>
+            <result property="isSale" column="is_sale" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,spu_id,price,
+        sku_name,sku_desc,weight,
+        tm_id,category3_id,sku_default_img,
+        is_sale
+    </sql>
+</mapper>

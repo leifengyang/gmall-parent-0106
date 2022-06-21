@@ -41,6 +41,9 @@ public class CategoryController {
         System.out.println("收到请求了.....");
         //查询所有一级分类
         List<BaseCategory1> category1s = baseCategory1Service.list();
+//        if(category1s.size() > 0){
+//            throw  new GmallException(ResultCodeEnum.LOGIN_AUTH);
+//        }
         //封装到Result中
         return Result.ok(category1s);
     }
