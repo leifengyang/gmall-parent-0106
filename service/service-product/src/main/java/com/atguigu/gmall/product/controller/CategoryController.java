@@ -32,7 +32,6 @@ public class CategoryController {
     /**
      * 获取所有的一级分类。
      * 1、controller、service、dao
-     * 2、
      *
      * @return
      */

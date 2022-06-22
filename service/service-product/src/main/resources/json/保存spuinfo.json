@@ -1,0 +1,79 @@
+{
+  "id": null,
+  "spuName": "诺基亚C20 Plus",
+  "description": " 诺基亚（NOKIA）\n商品名称：诺基亚C20 Plus商品编号：100022569730商品毛重：325.00g商品产地：中国大陆CPU型号：其他运行内存：3GB存储卡：支持MicroSD(TF)后摄主摄像素：800万像素前摄主摄像素：500万像素分辨率：高清HD+充电器：其他支持IPv6：支持IPv6系统：Android机身内存：32GB\n",
+  "category3Id": 61,
+  "spuImageList": [
+    {
+      "imgName": "1.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/5818cb852edd4a25a6eee7e3e1d9edca_1.png"
+    },
+    {
+      "imgName": "5.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/88259603a48c49d89cba66e29ad978ee_5.png"
+    },
+    {
+      "imgName": "3.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/d197eec0383f4161961421cb191a9ae1_3.png"
+    },
+    {
+      "imgName": "2.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/844ff8b3598b4a8895bfa8c09238c2b7_2.png"
+    },
+    {
+      "imgName": "4.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/efd3a628f93545c9963109a753c534f2_4.png"
+    },
+    {
+      "imgName": "5.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/08195e475015484485500f6d0e703218_5.png"
+    },
+    {
+      "imgName": "1.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/7daf2f2256cc47e0bfad512a980599dd_1.png"
+    },
+    {
+      "imgName": "2.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/be6cde16d5264c28878a965eb49b65b3_2.png"
+    },
+    {
+      "imgName": "3.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/01b364358fc548bf8dcefca5b94b3152_3.png"
+    },
+    {
+      "imgName": "4.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/5398dc8793f549fb82144e63e01bb138_4.png"
+    }
+  ],
+  "spuSaleAttrList": [
+    {
+      "baseSaleAttrId": "1",
+      "saleAttrName": "选择颜色",
+      "spuSaleAttrValueList": [
+        {
+          "baseSaleAttrId": "1",
+          "saleAttrValueName": "蓝色"
+        },
+        {
+          "baseSaleAttrId": "1",
+          "saleAttrValueName": "仙女"
+        }
+      ]
+    },
+    {
+      "baseSaleAttrId": "2",
+      "saleAttrName": "选择版本",
+      "spuSaleAttrValueList": [
+        {
+          "baseSaleAttrId": "2",
+          "saleAttrValueName": "8+128"
+        },
+        {
+          "baseSaleAttrId": "2",
+          "saleAttrValueName": "12+256"
+        }
+      ]
+    }
+  ],
+  "tmId": 13
+}

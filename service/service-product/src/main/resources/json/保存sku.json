@@ -1,0 +1,88 @@
+{
+  "id": null,
+  "spuId": 28,
+  "price": "699",
+  "skuName": " 诺基亚C20 Plus 蓝色 8+128 超拉风",
+  "weight": "1",
+  "skuDesc": "ddddd",
+  "category3Id": 61,
+  "skuAttrValueList": [
+    {
+      "attrId": "1",
+      "valueId": "2"
+    },
+    {
+      "attrId": "2",
+      "valueId": "8"
+    },
+    {
+      "attrId": "3",
+      "valueId": "19"
+    },
+    {
+      "attrId": "4",
+      "valueId": "27"
+    },
+    {
+      "attrId": "5",
+      "valueId": "34"
+    },
+    {
+      "attrId": "12",
+      "valueId": "67"
+    },
+    {
+      "attrId": "11",
+      "valueId": "70"
+    }
+  ],
+  "skuSaleAttrValueList": [
+    {
+      "saleAttrValueId": "118",
+      "saleAttrValueName": "蓝色",
+      "baseSaleAttrId": "1",
+      "saleAttrName": "选择颜色"
+    },
+    {
+      "saleAttrValueId": "120",
+      "saleAttrValueName": "8+128",
+      "baseSaleAttrId": "2",
+      "saleAttrName": "选择版本"
+    }
+  ],
+  "skuImageList": [
+    {
+      "spuImgId": 279,
+      "imgName": "1.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/5818cb852edd4a25a6eee7e3e1d9edca_1.png",
+      "isDefault": 1
+    },
+    {
+      "spuImgId": 280,
+      "imgName": "5.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/88259603a48c49d89cba66e29ad978ee_5.png",
+      "isDefault": 0
+    },
+    {
+      "spuImgId": 281,
+      "imgName": "3.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/d197eec0383f4161961421cb191a9ae1_3.png",
+      "isDefault": 0
+    },
+    {
+      "spuImgId": 282,
+      "imgName": "2.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/844ff8b3598b4a8895bfa8c09238c2b7_2.png",
+      "isDefault": 0
+    },
+    {
+      "spuImgId": 283,
+      "imgName": "4.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/efd3a628f93545c9963109a753c534f2_4.png",
+      "isDefault": 0
+    }
+  ],
+  "skuDefaultImg": "http://192.168.200.100:9000/gmall/5818cb852edd4a25a6eee7e3e1d9edca_1.png",
+  "tmId": 13
+}
+
