@@ -20,3 +20,7 @@ spring:
             - Path=/admin/product/**
 
 
+        - id: front_route    #所有 域名的请求都来到 web-front 前端
+          uri: lb://web-front
+          predicates:
+            - Host=**.gmall.com

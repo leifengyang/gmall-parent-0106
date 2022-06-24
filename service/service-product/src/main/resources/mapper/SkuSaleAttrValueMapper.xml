@@ -5,14 +5,42 @@
 <mapper namespace="com.atguigu.gmall.product.mapper.SkuSaleAttrValueMapper">
 
     <resultMap id="BaseResultMap" type="com.atguigu.gmall.model.product.SkuSaleAttrValue">
-            <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="skuId" column="sku_id" jdbcType="BIGINT"/>
-            <result property="spuId" column="spu_id" jdbcType="INTEGER"/>
-            <result property="saleAttrValueId" column="sale_attr_value_id" jdbcType="BIGINT"/>
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="skuId" column="sku_id" jdbcType="BIGINT"/>
+        <result property="spuId" column="spu_id" jdbcType="INTEGER"/>
+        <result property="saleAttrValueId" column="sale_attr_value_id" jdbcType="BIGINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,sku_id,spu_id,
+        id
+        ,sku_id,spu_id,
         sale_attr_value_id
     </sql>
+
+
+    <resultMap id="ValueSkuVoMap" type="com.atguigu.gmall.model.vo.ValueSkuVo">
+        <id property="sku_id" column="sku_id"></id>
+        <result property="sku_values" column="sku_values"></result>
+    </resultMap>
+    <select id="getSpudeAllSkuSaleAttrAndValue"
+            resultMap="ValueSkuVoMap">
+        select abc.sku_id,
+               GROUP_CONCAT(
+                   DISTINCT abc.sale_attr_value_id
+                   ORDER BY abc.sale_attr_value_id ASC SEPARATOR '|'
+               ) sku_values
+        from (select ssav.*,
+                     spuav.sale_attr_name,
+                     spuav.sale_attr_value_name
+              from sku_sale_attr_value ssav
+                       left join spu_sale_attr_value spuav
+                                 on spuav.spu_id = ssav.spu_id
+                                     and ssav.sale_attr_value_id = spuav.id
+              WHERE ssav.spu_id = #{spuId}
+              ORDER BY ssav.sku_id,
+                       spuav.base_sale_attr_id,
+                       ssav.sale_attr_value_id) abc
+        GROUP BY abc.sku_id
+
+    </select>
 </mapper>

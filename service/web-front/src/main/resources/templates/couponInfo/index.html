@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE">
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+    <title>我的优惠券列表</title>
+    <link rel="icon" href="./img/favicon.ico">
+
+    <link rel="stylesheet" type="text/css" href="/css/all.css" />
+    <link rel="stylesheet" type="text/css" href="/css/pages-seckillOrder.css" />
+    <link rel="stylesheet" type="text/css" href="/css/pages-myOrder.css" />
+
+    <div th:include="common/head :: head"></div>
+</head>
+
+<body>
+<!-- 头部栏位 -->
+<!--页面顶部-->
+<div th:include="common/header :: header"></div>
+
+<!--header-->
+<div id="account" >
+    <div class="py-container">
+        <div class="yui3-g home">
+            <!--左侧列表-->
+            <div class="yui3-u-1-6 list">
+                <div th:include="common/left :: left"></div>
+            </div>
+            <!--右侧主内容-->
+            <div class="yui3-u-5-6 order-pay">
+                <div class="body">
+                    <div class="table-title">
+                        <table class="sui-table  order-table">
+                            <tr>
+                                <thead>
+                                <th width="10%">优惠券类型</th>
+                                <th width="20%">面额</th>
+                                <th width="43%">描述</th>
+                                <th width="15%">过期时间</th>
+                                <th width="10%">状态</th>
+                                </thead>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="order-detail">
+                        <div class="orders">
+
+                            <!--order2-->
+                            <div v-for="(couponInfo,index) in data" :key="couponInfo.id">
+                                <table class="sui-table table-bordered order-datatable" style="margin-bottom: 0px;">
+                                    <tbody>
+                                    <tr>
+                                        <td width="10%" class="center">
+                                            <span class="coupon-name" v-if="couponInfo.couponType == 'CASH'">现金券</span>
+                                            <span class="coupon-name" v-if="couponInfo.couponType == 'DISCOUNT'">折扣券</span>
+                                            <span class="coupon-name" v-if="couponInfo.couponType == 'FULL_REDUCTION'">满减卷</span>
+                                            <span class="coupon-name" v-if="couponInfo.couponType == 'FULL_DISCOUNT'">满件打折卷</span>
+                                        </td>
+                                        <td width="20%" class="center">
+                                            <span class="condition" v-if="couponInfo.couponType == 'CASH'">现金券{{ couponInfo.benefitAmount }}元</span>
+                                            <span class="condition" v-if="couponInfo.couponType == 'DISCOUNT'">折扣券{{ couponInfo.benefitDiscount }}折</span>
+                                            <span class="condition" v-if="couponInfo.couponType == 'FULL_REDUCTION'">满{{ couponInfo.conditionAmount }}减{{ couponInfo.benefitAmount }}元</span>
+                                            <span class="condition" v-if="couponInfo.couponType == 'FULL_DISCOUNT'">满{{ couponInfo.conditionNum }}件打{{ couponInfo.benefitDiscount }}折</span>
+                                        </td>
+                                        <td width="43%" class="center">{{ couponInfo.rangeDesc }}</td>
+                                        <td width="15%" class="center">{{ couponInfo.expireTime }}</td>
+                                        <td width="10%" class="center">{{ couponInfo.couponStatus == 'NOT_USED' ? '未使用' : '已使用' }}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="choose-order" v-if="data !== undefined && data.length > 0">
+                            <div class="sui-pagination pagination-large top-pages">
+                                <ul>
+                                    <li class="prev disabled"
+                                        :class="{disabled: pageNo == 1}"
+                                        @click.prevent="fetchData(pageNo - 1)"
+                                    >
+                                        <a href="javascript:">«上一页</a>
+                                    </li>
+                                    <li
+                                            v-for="page in pages"
+                                            :key="page"
+                                            :class="{active: pageNo == page, disabled: pageNo == page}"
+                                            :title="'第'+page+'页'"
+                                            @click.prevent="fetchData(page)"
+                                    >
+                                        <a href="javascript:">{{ page }}</a>
+                                    </li>
+
+                                    <li class="prev disabled"
+                                        :class="{disabled: pageNo == pages}"
+                                        @click.prevent="fetchData(pageNo + 1)"
+                                    >
+                                        <a href="javascript:">下一页»</a>
+                                    </li>
+                                </ul>
+                                <div>
+                                    <span>&nbsp;&nbsp;&nbsp;&nbsp;共{{pages}}页&nbsp;</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+
+                    <div class="like-title">
+                        <div class="mt">
+                            <span class="fl"><strong>热卖单品</strong></span>
+                        </div>
+                    </div>
+                    <div class="like-list">
+                        <ul class="yui3-g">
+                            <li class="yui3-u-1-4">
+                                <div class="list-wrap">
+                                    <div class="p-img">
+                                        <img src="./img/_/itemlike01.png" />
+                                    </div>
+                                    <div class="attr">
+                                        <em>DELL戴尔Ins 15MR-7528SS 15英寸 银色 笔记本</em>
+                                    </div>
+                                    <div class="price">
+                                        <strong>
+                                            <em>¥</em>
+                                            <i>3699.00</i>
+                                        </strong>
+                                    </div>
+                                    <div class="commit">
+                                        <i class="command">已有6人评价</i>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="yui3-u-1-4">
+                                <div class="list-wrap">
+                                    <div class="p-img">
+                                        <img src="./img/_/itemlike02.png" />
+                                    </div>
+                                    <div class="attr">
+                                        <em>Apple苹果iPhone 6s/6s Plus 16G 64G 128G</em>
+                                    </div>
+                                    <div class="price">
+                                        <strong>
+                                            <em>¥</em>
+                                            <i>4388.00</i>
+                                        </strong>
+                                    </div>
+                                    <div class="commit">
+                                        <i class="command">已有700人评价</i>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="yui3-u-1-4">
+                                <div class="list-wrap">
+                                    <div class="p-img">
+                                        <img src="./img/_/itemlike03.png" />
+                                    </div>
+                                    <div class="attr">
+                                        <em>DELL戴尔Ins 15MR-7528SS 15英寸 银色 笔记本</em>
+                                    </div>
+                                    <div class="price">
+                                        <strong>
+                                            <em>¥</em>
+                                            <i>4088.00</i>
+                                        </strong>
+                                    </div>
+                                    <div class="commit">
+                                        <i class="command">已有700人评价</i>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="yui3-u-1-4">
+                                <div class="list-wrap">
+                                    <div class="p-img">
+                                        <img src="./img/_/itemlike04.png" />
+                                    </div>
+                                    <div class="attr">
+                                        <em>DELL戴尔Ins 15MR-7528SS 15英寸 银色 笔记本</em>
+                                    </div>
+                                    <div class="price">
+                                        <strong>
+                                            <em>¥</em>
+                                            <i>4088.00</i>
+                                        </strong>
+                                    </div>
+                                    <div class="commit">
+                                        <i class="command">已有700人评价</i>
+                                    </div>
+                                </div>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- 底部栏位 -->
+<!--页面底部-->
+<div class="clearfix footer">
+    <div class="py-container">
+        <div class="footlink">
+            <div class="clearfix Mod-list">
+                <div class="yui3-g">
+                    <div class="yui3-u-1-6">
+                        <h4>购物指南</h4>
+                        <ul class="unstyled">
+                            <li>购物流程</li>
+                            <li>会员介绍</li>
+                            <li>生活旅行/团购</li>
+                            <li>常见问题</li>
+                            <li>购物指南</li>
+                        </ul>
+
+                    </div>
+                    <div class="yui3-u-1-6">
+                        <h4>配送方式</h4>
+                        <ul class="unstyled">
+                            <li>上门自提</li>
+                            <li>211限时达</li>
+                            <li>配送服务查询</li>
+                            <li>配送费收取标准</li>
+                            <li>海外配送</li>
+                        </ul>
+                    </div>
+                    <div class="yui3-u-1-6">
+                        <h4>支付方式</h4>
+                        <ul class="unstyled">
+                            <li>货到付款</li>
+                            <li>在线支付</li>
+                            <li>分期付款</li>
+                            <li>邮局汇款</li>
+                            <li>公司转账</li>
+                        </ul>
+                    </div>
+                    <div class="yui3-u-1-6">
+                        <h4>售后服务</h4>
+                        <ul class="unstyled">
+                            <li>售后政策</li>
+                            <li>价格保护</li>
+                            <li>退款说明</li>
+                            <li>返修/退换货</li>
+                            <li>取消订单</li>
+                        </ul>
+                    </div>
+                    <div class="yui3-u-1-6">
+                        <h4>特色服务</h4>
+                        <ul class="unstyled">
+                            <li>夺宝岛</li>
+                            <li>DIY装机</li>
+                            <li>延保服务</li>
+                            <li>尚品汇E卡</li>
+                            <li>尚品汇通信</li>
+                        </ul>
+                    </div>
+                    <div class="yui3-u-1-6">
+                        <h4>帮助中心</h4>
+                        <img src="./img/wx_cz.jpg">
+                    </div>
+                </div>
+            </div>
+            <div class="Mod-copyright">
+                <ul class="helpLink">
+                    <li>关于我们<span class="space"></span></li>
+                    <li>联系我们<span class="space"></span></li>
+                    <li>关于我们<span class="space"></span></li>
+                    <li>商家入驻<span class="space"></span></li>
+                    <li>营销中心<span class="space"></span></li>
+                    <li>友情链接<span class="space"></span></li>
+                    <li>关于我们<span class="space"></span></li>
+                    <li>营销中心<span class="space"></span></li>
+                    <li>友情链接<span class="space"></span></li>
+                    <li>关于我们</li>
+                </ul>
+                <p>地址：北京市昌平区宏福科技园综合楼6层</p>
+                <p>京ICP备19006430号</p>
+            </div>
+        </div>
+    </div>
+</div>
+<!--页面底部END-->
+<script src="/js/api/activity.js"></script>
+<script th:inline="javascript">
+    var item = new Vue({
+        el: '#account',
+
+        data: {
+            pageNo: 1,
+            pageSize:10,
+            pages: 1,
+            data:{}
+        },
+
+        created () {
+            this.fetchData(1)
+        },
+        methods: {
+            fetchData(pageNo = 1) {
+                if(pageNo < 1) pageNo = 1
+                if(pageNo >= this.pages) pageNo = this.pages
+
+                activity.getPageList(pageNo,this.pageSize).then(response => {
+                    this.data = response.data.data.records
+                    this.pages = response.data.data.pages
+                })
+            },
+
+            item(id) {
+                window.location = 'http://item.gmall.com/' + id + '.html'
+            }
+        }
+    })
+</script>
+
+<script th:inline="javascript">
+    window.page = {};
+    window.page.page_id = "couponInfo";
+    // window.page.item = {
+    //     "page_item_type": "",
+    //     "page_item": ""
+    // }
+    window.page.page_item_type = "";
+    window.page.page_item = ""
+    window.page.sourceType = "query"; //页面对象id
+</script>
+<script src="/hm.js"></script>
+</body>
+
+</html>

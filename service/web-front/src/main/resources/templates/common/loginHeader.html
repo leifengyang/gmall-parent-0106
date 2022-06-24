@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+
+<div id="nav-bottom" th:fragment="loginHeader">
+    <!--顶部-->
+    <div class="nav-top" id="header">
+        <div class="top">
+        </div>
+
+        <!--头部-->
+        <div class="header">
+            <div class="py-container">
+                <div class="yui3-g Logo">
+                    <div class="yui3-u Left logoArea">
+                        <a class="logo-bd" title="尚品汇" href="http://gmall.atguigu.cn/index.html"></a>
+                    </div>
+                    <div class="yui3-u Rit searchArea">
+                        <div class="search">
+                            <form action="" class="sui-form form-inline">
+                                <!--searchAutoComplete-->
+                                <div class="input-append">
+                                    <input id="keyword" type="text" v-model="keyword" class="input-error input-xxlarge" />
+                                    <button class="sui-btn btn-xlarge btn-danger" @click="search()" type="button">搜索</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/api/login.js"></script>
+    <script th:inline="javascript">
+        var item = new Vue({
+            el: '#header',
+
+            data: {
+                keyword: [[${searchParam?.keyword}]],
+                userInfo: {
+                    nickName: '',
+                    name: ''
+                }
+            },
+
+            created() {
+                this.showInfo()
+            },
+
+            methods: {
+                showInfo() {
+                    // debugger
+                    if(auth.getUserInfo()) {
+                        this.userInfo = auth.getUserInfo()
+                        console.log("--------"+this.userInfo.nickName)
+                    }
+                },
+
+                search() {
+                    if(this.keyword == null) this.keyword = ''
+                    window.location.href = 'http://list.atguigu.cn/list.html?keyword=' + this.keyword
+                },
+
+                login() {
+                    window.location.href = 'http://passport.atguigu.cn/login.html?originUrl='+window.location.href
+                },
+
+                logout() {
+                    //debugger
+                    login.logout().then(response => {
+                        console.log("已退出")
+                        auth.removeToken()
+                        auth.removeUserInfo()
+
+                        //跳转页面
+                        window.location.href = "/"
+                    })
+                }
+            }
+        })
+    </script>
+</div>
+
+</body>
+</html>

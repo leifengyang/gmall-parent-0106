@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE">
+		<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+		<title>微信支付页</title>
+        <link rel="icon" href="/img/favicon.ico">
+
+
+    <link rel="stylesheet" type="text/css" href="/css/all.css" />
+    <link rel="stylesheet" type="text/css" href="/css/pages-weixinpay.css" />
+		<div th:include="common/head :: head"></div>
+</head>
+
+	<body>
+		<!--head-->
+		<div class="top">
+			<div class="py-container">
+				<div class="shortcut">
+					<ul class="fl">
+						<li class="f-item">尚品汇欢迎您！</li>
+						<li class="f-item">请登录　<span><a href="#">免费注册</a></span></li>
+					</ul>
+					<ul class="fr">
+						<li class="f-item">我的订单</li>
+						<li class="f-item space"></li>
+						<li class="f-item">我的尚品汇</li>
+						<li class="f-item space"></li>
+						<li class="f-item">尚品汇会员</li>
+						<li class="f-item space"></li>
+						<li class="f-item">企业采购</li>
+						<li class="f-item space"></li>
+						<li class="f-item">关注尚品汇</li>
+						<li class="f-item space"></li>
+						<li class="f-item">客户服务</li>
+						<li class="f-item space"></li>
+						<li class="f-item">网站导航</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="cart py-container" id="item">
+			<!--logoArea-->
+			<div class="logoArea">
+				<div class="fl logo"><span class="title">收银台</span></div>
+			</div>
+			<!--主内容-->
+			<div class="checkout py-container  pay">
+				<div class="checkout-tit">
+					<h4 class="fl tit-txt"><span class="success-icon"></span><span  class="success-info">订单提交成功，请您及时付款！订单号：{{data.orderId}}</span></h4>
+                    <span class="fr"><em class="sui-lead">应付金额：</em><em  class="orange money">￥{{data.totalFee}}</em>元</span>
+					<div class="clearfix"></div>
+				</div>
+				<div class="checkout-steps">
+					<div class="fl weixin">微信支付</div>
+                    <div class="fl sao">
+                        <p class="red"></p>
+                        <div class="fl code">
+                            <div id="qrcode"></div>
+                            <div class="saosao">
+                                <p>请使用微信扫一扫</p>
+                                <p>扫描二维码支付</p>
+                            </div>
+                        </div>
+                        <div class="fl phone">
+
+                        </div>
+
+                    </div>
+                    <div class="clearfix"></div>
+				    <p><a href="pay.html" target="_blank">> 其他支付方式</a></p>
+				</div>
+			</div>
+
+		</div>
+		<!-- 底部栏位 -->
+		<!--页面底部-->
+<div class="clearfix footer">
+	<div class="py-container">
+		<div class="footlink">
+			<div class="clearfix Mod-list">
+				<div class="yui3-g">
+					<div class="yui3-u-1-6">
+						<h4>购物指南</h4>
+						<ul class="unstyled">
+							<li>购物流程</li>
+							<li>会员介绍</li>
+							<li>生活旅行/团购</li>
+							<li>常见问题</li>
+							<li>购物指南</li>
+						</ul>
+
+					</div>
+					<div class="yui3-u-1-6">
+						<h4>配送方式</h4>
+						<ul class="unstyled">
+							<li>上门自提</li>
+							<li>211限时达</li>
+							<li>配送服务查询</li>
+							<li>配送费收取标准</li>
+							<li>海外配送</li>
+						</ul>
+					</div>
+					<div class="yui3-u-1-6">
+						<h4>支付方式</h4>
+						<ul class="unstyled">
+							<li>货到付款</li>
+							<li>在线支付</li>
+							<li>分期付款</li>
+							<li>邮局汇款</li>
+							<li>公司转账</li>
+						</ul>
+					</div>
+					<div class="yui3-u-1-6">
+						<h4>售后服务</h4>
+						<ul class="unstyled">
+							<li>售后政策</li>
+							<li>价格保护</li>
+							<li>退款说明</li>
+							<li>返修/退换货</li>
+							<li>取消订单</li>
+						</ul>
+					</div>
+					<div class="yui3-u-1-6">
+						<h4>特色服务</h4>
+						<ul class="unstyled">
+							<li>夺宝岛</li>
+							<li>DIY装机</li>
+							<li>延保服务</li>
+							<li>尚品汇E卡</li>
+							<li>尚品汇通信</li>
+						</ul>
+					</div>
+					<div class="yui3-u-1-6">
+						<h4>帮助中心</h4>
+						<img src="./img/wx_cz.jpg">
+					</div>
+				</div>
+			</div>
+			<div class="Mod-copyright">
+				<ul class="helpLink">
+					<li>关于我们<span class="space"></span></li>
+					<li>联系我们<span class="space"></span></li>
+					<li>关于我们<span class="space"></span></li>
+					<li>商家入驻<span class="space"></span></li>
+					<li>营销中心<span class="space"></span></li>
+					<li>友情链接<span class="space"></span></li>
+					<li>关于我们<span class="space"></span></li>
+					<li>营销中心<span class="space"></span></li>
+					<li>友情链接<span class="space"></span></li>
+					<li>关于我们</li>
+				</ul>
+				<p>地址：北京市昌平区宏福科技园综合楼6层</p>
+				<p>京ICP备19006430号</p>
+			</div>
+		</div>
+	</div>
+</div>
+<!--页面底部END-->
+</body>
+<script src="/js/api/payment.js"></script>
+<script src="/js/plugins/qrcode.min.js" ></script>
+<script src="/js/plugins/stomp.min.js" ></script>
+<script th:inline="javascript">
+	var item = new Vue({
+		el: '#item',
+
+		data: {
+            orderId: [[${orderId}]],
+            timer: null,  // 定时器名称
+            initQCode: '',
+			isRun: false,
+            data: {}
+		},
+
+        created() {
+            debugger
+            payment.createNative(this.orderId).then(response => {
+                this.data = response.data.data
+                let qrcode = new QRCode(document.getElementById("qrcode"), {
+                    width : 300,
+                    height : 300
+                });
+                qrcode.makeCode(this.data.codeUrl);
+                this.isRun = true
+            })
+        },
+
+        mounted() {
+            var timer = setInterval(() => {
+                this.queryPayStatus(this.orderId)
+            }, 3000);
+            // 通过$once来监听定时器，在beforeDestroy钩子可以被清除。
+            this.$once('hook:beforeDestroy', () => {
+                clearInterval(timer);
+            })
+        },
+
+        methods: {
+            queryPayStatus(orderId) {
+                // debugger
+				if(!this.isRun) return
+                payment.queryPayStatus(orderId).then(response => {
+                    // debugger
+                    if (response.data.code == 200) {
+                        window.location.href = '/pay/success.html'
+                    }
+                })
+            }
+        }
+	})
+</script>
+
+</html>

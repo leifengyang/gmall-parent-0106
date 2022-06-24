@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+
+<div id="nav-bottom" th:fragment="header">
+    <!--顶部-->
+    <div class="nav-top" id="header">
+        <div class="top">
+            <div class="py-container">
+                <div class="shortcut">
+                    <ul class="fl">
+                        <li class="f-item">尚品汇欢迎您！</li>
+                        <li  v-if="userInfo.nickName == ''" class="f-item">请<span><a href="javascript:" @click="login()">登录</a></span>　<span><a href="#">免费注册</a></span></li>
+                        <li  v-if="userInfo.nickName != ''" class="f-item"><span>{{userInfo.nickName}}</span>　<span><a href="javascript:" @click="logout()">退出</a></span></li>
+                    </ul>
+                    <div class="fr typelist">
+                        <ul class="types">
+                            <li class="f-item">
+                                <span><a href="http://order.gmall.com/myOrder.html" target="_blank">我的订单</a></span>
+                            </li>
+
+                            <li class="f-item">
+                                <span>
+                                    <a href="http://cart.gmall.com/cart.html" target="_blank">我的购物车</a>
+                                </span>
+                            </li>
+                            <li class="f-item">
+                                <span>
+                                    <a href="http://activity.gmall.com/couponInfo.html" target="_blank">我的优惠券列表</a>
+                                </span>
+                            </li>
+                            <li class="f-item">
+                                <span>尚品汇会员</span>
+                            </li>
+                            <li class="f-item">
+                                <span>企业采购</span>
+                            </li>
+                            <li class="f-item">
+                                <span>关注尚品汇</span>
+                            </li>
+                            <li class="f-item">
+                                <span>
+                                    <a href="cooperation.html" target="_blank">合作招商</a>
+                                </span>
+                            </li>
+                            <li class="f-item">
+                                <span>
+                                    <a href="shoplogin.html" target="_blank">商家后台</a>
+                                </span>
+                            </li>
+                            <!--<li class="f-item">-->
+                            <!--<span>网站导航</li>-->
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!--头部-->
+        <div class="header">
+            <div class="py-container">
+                <div class="yui3-g Logo">
+                    <div class="yui3-u Left logoArea">
+                        <a class="logo-bd" title="尚品汇" href="/index.html" target="_blank"></a>
+                    </div>
+                    <div class="yui3-u Rit searchArea">
+                        <div class="search">
+                            <form action="" class="sui-form form-inline">
+                                <!--searchAutoComplete-->
+                                <div class="input-append">
+                                    <input id="keyword" type="text" v-model="keyword" class="input-error input-xxlarge" />
+                                    <button class="sui-btn btn-xlarge btn-danger" @click="search()" type="button">搜索</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/api/login.js"></script>
+    <script th:inline="javascript">
+        var item = new Vue({
+            el: '#header',
+
+            data: {
+                keyword: [[${searchParam?.keyword}]],
+                userInfo: {
+                    nickName: '',
+                    name: ''
+                }
+            },
+
+            created() {
+                this.showInfo()
+            },
+
+            methods: {
+                showInfo() {
+                    // debugger
+                    if(auth.getUserInfo()) {
+                        this.userInfo = auth.getUserInfo()
+                        console.log("--------"+this.userInfo.nickName)
+                    }
+                },
+
+                search() {
+                    if(this.keyword == null) this.keyword = ''
+                    window.location.href = 'http://list.gmall.com/list.html?keyword=' + this.keyword
+                },
+
+                login() {
+                    window.location.href = 'http://passport.gmall.com/login.html?originUrl='+window.location.href
+                },
+
+                logout() {
+                    //debugger
+                    login.logout().then(response => {
+                        console.log("已退出")
+                        auth.removeToken()
+                        auth.removeUserInfo()
+
+                        //跳转页面
+                        window.location.href = "/"
+                    })
+                }
+            }
+        })
+    </script>
+</div>
+
+</body>
+</html>

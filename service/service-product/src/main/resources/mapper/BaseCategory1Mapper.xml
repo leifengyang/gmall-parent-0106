@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.atguigu.gmall.product.mapper.BaseCategory1Mapper">
+
+
+    <!--    三级分类树形封装-->
+    <resultMap id="CategoryVoMap" type="com.atguigu.gmall.model.vo.CategoryVo">
+        <!--        一级分类封装-->
+        <id property="categoryId" column="id"></id>
+        <result property="categoryName" column="name"></result>
+        <!--        指定二级分类封装规则-->
+        <collection property="categoryChild" ofType="com.atguigu.gmall.model.vo.CategoryVo">
+            <id property="categoryId" column="id2"></id>
+            <result property="categoryName" column="name2"></result>
+            <!--    指定三级分类封装规则-->
+            <collection property="categoryChild" ofType="com.atguigu.gmall.model.vo.CategoryVo">
+                <id property="categoryId" column="id3"></id>
+                <result property="categoryName" column="name3"></result>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <select id="getCategorys" resultMap="CategoryVoMap">
+        select bc1.*,
+               bc2.id     id2,
+               bc2.name   name2,
+               bc2.category1_id,
+               bc3.id     id3,
+               bc3.`name` name3,
+               bc3.category2_id
+        from base_category1 bc1
+                 LEFT JOIN base_category2 bc2 on bc1.id = bc2.category1_id
+                 LEFT JOIN base_category3 bc3 on bc3.category2_id = bc2.id
+    </select>
+</mapper>

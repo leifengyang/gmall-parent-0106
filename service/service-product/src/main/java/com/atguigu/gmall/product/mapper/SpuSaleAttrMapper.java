@@ -20,6 +20,15 @@ public interface SpuSaleAttrMapper extends BaseMapper<SpuSaleAttr> {
      * @return
      */
     List<SpuSaleAttr> getSpuSaleAttrList(@Param("spuId") Long spuId);
+
+    /**
+     * 根据skuId和spuId查询出当前商品spu定义的所有销售属性名和值以及标记出当前sku是哪一对组合
+     * @param skuId
+     * @param spuId
+     * @return
+     */
+    List<SpuSaleAttr> getSpuSaleAttrAndMarkSkuSaleValue(@Param("skuId") Long skuId,
+                                                        @Param("spuId") Long spuId);
 }
 
 
