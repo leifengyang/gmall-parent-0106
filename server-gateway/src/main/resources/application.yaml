@@ -14,6 +14,11 @@ spring:
             allowCredentials: true #允许Cookie等一些安全标识头跨域
 
       routes:
+        - id: incr_test
+          uri: lb://service-product
+          predicates:
+            - Path=/incr
+
         - id: product_route
           uri: lb://service-product
           predicates:

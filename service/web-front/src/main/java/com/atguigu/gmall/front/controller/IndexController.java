@@ -27,7 +27,9 @@ public class IndexController {
         //远程调用商品服务=查询出三级分类数据。
         Result<List<CategoryVo>> result = categoryFeignClient.getCategorys();
         List<CategoryVo> data = result.getData();
-        model.addAttribute("list",data);
+        Model list = model.addAttribute("list", data);
+
+
         return "index/index";
     }
 }

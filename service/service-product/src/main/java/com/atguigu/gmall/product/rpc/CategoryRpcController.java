@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * RPC暴露所有和分类有关的远程接口
@@ -25,6 +27,10 @@ public class CategoryRpcController {
     CategoryBizService categoryBizService;
 
 
+    //缓存来加速系统；
+    //缓存一个key，值只是不一样。原来key指向的对象，由于断了引用，会被GC回收。
+    Map<String,List<CategoryVo>>  categoryCache = new ConcurrentHashMap<>();
+
 
     /**
      * 获取系统所有三级分类并组装成树形结构
@@ -36,12 +42,28 @@ public class CategoryRpcController {
      *
      * @return
      */
-    @GetMapping("/categorys/all")
-    public Result<List<CategoryVo>> getCategorys(){
+//    @GetMapping("/categorys/all")
+//    public Result<List<CategoryVo>> getCategorysLocalCache(){
+//        //1、先看有之前缓存的数据
+//        List<CategoryVo> cacheData = categoryCache.get("categorys");
+//        if(cacheData!=null){
+//            //2、缓存中有。
+//            return Result.ok(cacheData);
+//        }
+//
+//        //3、缓存没有：去数据库查询所有三级分类
+//        List<CategoryVo> vos =   categoryBizService.getCategorys();
+//        //4、查询到以后放到缓存
+//        categoryCache.put("categorys",vos);
+//        return Result.ok(vos);
+//    }
 
-        //查询所有三级分类
+
+    @GetMapping("/categorys/all")
+    public Result<List<CategoryVo>> getCategorysRedis(){
+
         List<CategoryVo> vos =   categoryBizService.getCategorys();
+
         return Result.ok(vos);
     }
-
 }
