@@ -1,0 +1,31 @@
+传了时间leaseTime就是自己的值，否则是-1
+1、lock.lock();
+    1.1  lock(-1, null, false);
+        1.1.1 分配线程id
+        1.1.2 tryAcquire(-1,-1,unit, threadId)
+            1.1.2.1 tryAcquireAsync(-1, -1, unit, threadId)
+                加锁：
+                  if(leaseTime != -1){
+                     ttlRemainingFuture = tryLockInnerAsync(waitTime, leaseTime, unit, threadId, RedisCommands.EVAL_LONG);
+                  }else{
+                     //加锁
+                     ttlRemainingFuture = tryLockInnerAsync(waitTime, internalLockLeaseTime,
+                                         TimeUnit.MILLISECONDS, threadId, RedisCommands.EVAL_LONG);
+                     //tryLockInnerAsync(-1,30000,MILLISECONDS,threadId, RedisCommands.EVAL_LONG)
+                     //自己不传时间按照 internalLockLeaseTime 指定的值来；从配置中得到一个 getLockWatchdogTimeout（看门狗）；
+                  }
+
+                异步加锁：加锁成功后触发回调
+                onComplete() {
+                    if (leaseTime != -1) {
+                        internalLockLeaseTime = unit.toMillis(leaseTime);
+                    } else {
+                        scheduleExpirationRenewal(threadId); //定时重新设置过期时间
+                        //internalLockLeaseTime / 3：   10s以后自动续期。 【喂狗】
+                    }
+                }
+
+
+
+2、lock.lock(30, TimeUnit unit)
+    2.1  lock(30, unit, false);

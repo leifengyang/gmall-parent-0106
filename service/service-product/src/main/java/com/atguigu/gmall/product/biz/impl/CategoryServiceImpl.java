@@ -25,8 +25,18 @@ public class CategoryServiceImpl implements CategoryBizService {
 
     ReentrantLock lock = new ReentrantLock();  //集群模式锁不住
 
+
+
     @Override
     public List<CategoryVo> getCategorys() {
+        return  category1Mapper.getCategorys();
+    }
+
+
+
+
+    //配合缓存
+    public List<CategoryVo> getCategorys1111() {
         //1、先看缓存
         String categorys = redisTemplate.opsForValue().get("categorys");
         //2、缓存中没有
@@ -67,4 +77,6 @@ public class CategoryServiceImpl implements CategoryBizService {
         System.out.println(categorys+"：反序列化后："+data);
         return data;
     }
+
+
 }

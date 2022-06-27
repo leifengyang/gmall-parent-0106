@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 
 
 @Slf4j
@@ -23,6 +24,28 @@ public class JSONs {
         return "";
     }
 
+    public static<T> T toObj(String json, Class<T> ref){
+        if(StringUtils.isEmpty(json)){
+            return null;
+        }
+
+        try {
+            T value = mapper.readValue(json, ref);
+            return value;
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    /**
+     *
+     * @param json
+     * @param ref
+     * @param <T>
+     * @return
+     */
     public static<T> T toObj(String json, TypeReference<T> ref) {
         T t = null;
         try {
