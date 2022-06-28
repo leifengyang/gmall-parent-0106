@@ -1,4 +1,4 @@
-package com.atguigu.gmall.common.config;
+package com.atguigu.gmall.starter.cache;
 
 
 import org.redisson.Redisson;

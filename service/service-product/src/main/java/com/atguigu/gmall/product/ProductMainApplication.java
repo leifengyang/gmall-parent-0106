@@ -1,7 +1,6 @@
 package com.atguigu.gmall.product;
 
 
-import com.atguigu.gmall.common.annotation.EnableRedisson;
 import com.atguigu.gmall.common.config.Swagger2Config;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -36,8 +35,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 
 
+//@EnableCache
+//@EnableRedisson  //导入Redisson的配置
+
+
 @EnableScheduling //开启定时调度
-@EnableRedisson  //导入Redisson的配置
 @EnableTransactionManagement  //开启基于注解的自动事务管理
 @Import({Swagger2Config.class})
 @MapperScan(basePackages = "com.atguigu.gmall.product.mapper") //批量扫描就无需在每个Mapper接口上标注@Mapper

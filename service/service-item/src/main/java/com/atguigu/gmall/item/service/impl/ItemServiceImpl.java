@@ -3,7 +3,8 @@ package com.atguigu.gmall.item.service.impl;
 import com.atguigu.gmall.common.constant.RedisConst;
 import com.atguigu.gmall.common.result.Result;
 import com.atguigu.gmall.feign.product.SkuFeignClient;
-import com.atguigu.gmall.item.component.CacheService;
+import com.atguigu.gmall.starter.cache.annotation.Cache;
+import com.atguigu.gmall.starter.cache.component.CacheService;
 import com.atguigu.gmall.item.service.ItemService;
 import com.atguigu.gmall.model.product.SkuInfo;
 import com.atguigu.gmall.model.product.SpuSaleAttr;
@@ -37,6 +38,41 @@ public class ItemServiceImpl implements ItemService {
 
     @Autowired
     CacheService cacheService;
+
+
+    /**
+     *
+     * key：支持表达式动态计算； 使用SpEL功能，甚至于表达式内的java代码都能运行出来。
+     * #{} 代表需要动态取值
+     * 1)、#params：取出当前方法的所有参数中的某个值;   #params[n]： 取出第n+1个参数
+     * 2)、#currentDate：获取当天日期
+     * 3)、#redis：从redis中读取
+     *
+     * 示例：
+     *   sku:info:#{#params[0]}    计算得到： sku:info:47
+     *   hello:xx:#{#redis.num}    计算得到： hello:xx:1
+     *   categorys                 计算得到： categorys
+     *
+     *
+     *
+     * @param skuId
+     * @return
+     */
+    @Cache(
+            key = RedisConst.SKU_INFO_CACHE_KEY_PREFIX+"#{#params[0]}",
+            bloomName = RedisConst.SKU_BLOOM_FILTER_NAME,
+            bloomIf = "#{#params[0]}",
+            ttl = RedisConst.SKU_INFO_CACHE_TIMEOUT
+    )  //提升通用性。那些问题？  //sku:info:skuid的值
+    @Override
+    public SkuDetailVo getItemDetail(Long skuId) {
+
+        return getItemDetailFromRpc(skuId);
+    }
+
+
+
+
 
 
     /**
@@ -81,9 +117,7 @@ public class ItemServiceImpl implements ItemService {
      * @return
      */
 
-
-    @Override
-    public SkuDetailVo getItemDetail(Long skuId) {
+    public SkuDetailVo getItemDetailRedissonLockBloom(Long skuId) {
         String cacheKey = RedisConst.SKU_INFO_CACHE_KEY_PREFIX + skuId;
         //1、先查缓存。
         SkuDetailVo data = cacheService.getData(cacheKey, SkuDetailVo.class);
@@ -113,7 +147,8 @@ public class ItemServiceImpl implements ItemService {
                 try {
                     TimeUnit.MILLISECONDS.sleep(500);
                     //2.6、直接查缓存即可
-                    return  cacheService.getData(cacheKey, SkuDetailVo.class);
+//                    return  getItemDetail(skuId); //递归调法
+                    return cacheService.getData(cacheKey,SkuDetailVo.class);
                 } catch (InterruptedException e) {
 
                 }
@@ -186,7 +221,7 @@ public class ItemServiceImpl implements ItemService {
 //    }
 
 
-    //
+    //回源查数据的方法
     public SkuDetailVo getItemDetailFromRpc(Long skuId) {
         SkuDetailVo vo = new SkuDetailVo();
         //2、sku的info
@@ -219,4 +254,6 @@ public class ItemServiceImpl implements ItemService {
 
         return vo;
     }
+
+
 }

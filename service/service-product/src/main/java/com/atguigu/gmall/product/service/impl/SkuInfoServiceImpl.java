@@ -15,11 +15,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBloomFilter;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
 * @author lfy
@@ -45,6 +49,36 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
 
     @Autowired
     RedissonClient redissonClient;
+
+    @Autowired
+    StringRedisTemplate redisTemplate;
+
+    static ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(4);
+
+
+    public static void main(String[] args) {
+        System.out.println("开始");
+        threadPool.schedule(()-> System.out.println("hello"),10,TimeUnit.SECONDS);
+
+        System.out.println("结束");
+    }
+
+    @Override
+    public void updateSkuInfo(SkuInfo skuInfo){
+        //1、改数据库
+
+        //2、双删缓存。
+        //1）、立即删   80% 都ok
+        redisTemplate.delete(RedisConst.SKU_INFO_CACHE_KEY_PREFIX+skuInfo.getId());
+        //2）、延迟删   99.99% 都ok
+        //拿到一个延迟任务的线程池
+        threadPool.schedule(()->redisTemplate.delete(RedisConst.SKU_INFO_CACHE_KEY_PREFIX+skuInfo.getId()),10, TimeUnit.SECONDS);
+        //立即结束
+        //兜底：数据有过期时间。 redis怎么删数据？
+        //redis怎么淘汰这些过期数据？
+        //1）、
+    }
+
 
     @Transactional
     @Override
