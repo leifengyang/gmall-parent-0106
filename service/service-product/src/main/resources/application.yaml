@@ -3,6 +3,9 @@ server:
 
 
 spring:
+  profiles:
+    include: sharding
+
   datasource:
     url: jdbc:mysql://192.168.200.100:3306/gmall_product?useSSL=false&characterEncoding=utf-8
     username: root

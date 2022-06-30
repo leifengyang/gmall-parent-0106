@@ -1,0 +1,38 @@
+spring:
+  shardingsphere:
+    datasource:  #指定数据源信息
+      names: master,slave0,slave1
+      master:
+        type: com.zaxxer.hikari.HikariDataSource
+        url: jdbc:mysql://192.168.200.100:3306/gmall_product?useSSL=false&characterEncoding=utf-8
+        username: root
+        password: root
+        driver-class-name: com.mysql.jdbc.Driver
+      slave0:
+        type: com.zaxxer.hikari.HikariDataSource
+        url: jdbc:mysql://192.168.200.100:3307/gmall_product?useSSL=false&characterEncoding=utf-8
+        username: root
+        password: root
+        driver-class-name: com.mysql.jdbc.Driver
+      slave1:
+        type: com.zaxxer.hikari.HikariDataSource
+        url: jdbc:mysql://192.168.200.100:3308/gmall_product?useSSL=false&characterEncoding=utf-8
+        username: root
+        password: root
+        driver-class-name: com.mysql.jdbc.Driver
+    rules:       #指定各种规则
+      readwrite-splitting:
+        data-sources:
+          ms0s1:
+            type: Static
+            props:
+              write-data-source-name: master
+              read-data-source-names: slave0,slave1
+              load-balancer-name: guigu-lb
+
+        load-balancers:
+          guigu-lb:
+            type: ROUND_ROBIN
+    props:
+      sql-show: true
+

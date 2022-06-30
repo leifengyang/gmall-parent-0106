@@ -23,6 +23,9 @@ public class ItemRpcController {
     ItemService itemService;
 
     /**
+     * Java8以后；流式编程
+     * StreamAPI；
+     *
      * 查询商品详情
      * @param skuId
      * @return
