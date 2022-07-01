@@ -5,34 +5,77 @@
 <mapper namespace="com.atguigu.gmall.product.mapper.SkuInfoMapper">
 
     <resultMap id="BaseResultMap" type="com.atguigu.gmall.model.product.SkuInfo">
-            <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="spuId" column="spu_id" jdbcType="BIGINT"/>
-            <result property="price" column="price" jdbcType="DECIMAL"/>
-            <result property="skuName" column="sku_name" jdbcType="VARCHAR"/>
-            <result property="skuDesc" column="sku_desc" jdbcType="VARCHAR"/>
-            <result property="weight" column="weight" jdbcType="DECIMAL"/>
-            <result property="tmId" column="tm_id" jdbcType="BIGINT"/>
-            <result property="category3Id" column="category3_id" jdbcType="BIGINT"/>
-            <result property="skuDefaultImg" column="sku_default_img" jdbcType="VARCHAR"/>
-            <result property="isSale" column="is_sale" jdbcType="TINYINT"/>
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="spuId" column="spu_id" jdbcType="BIGINT"/>
+        <result property="price" column="price" jdbcType="DECIMAL"/>
+        <result property="skuName" column="sku_name" jdbcType="VARCHAR"/>
+        <result property="skuDesc" column="sku_desc" jdbcType="VARCHAR"/>
+        <result property="weight" column="weight" jdbcType="DECIMAL"/>
+        <result property="tmId" column="tm_id" jdbcType="BIGINT"/>
+        <result property="category3Id" column="category3_id" jdbcType="BIGINT"/>
+        <result property="skuDefaultImg" column="sku_default_img" jdbcType="VARCHAR"/>
+        <result property="isSale" column="is_sale" jdbcType="TINYINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,spu_id,price,
+        id
+        ,spu_id,price,
         sku_name,sku_desc,weight,
         tm_id,category3_id,sku_default_img,
         is_sale
     </sql>
 
     <update id="updateSaleStatus">
-        update sku_info set is_sale=#{status} where id=#{skuId}
+        update sku_info
+        set is_sale=#{status}
+        where id = #{skuId}
     </update>
 
     <select id="getSkuPrice" resultType="java.math.BigDecimal">
-        select price from  sku_info where  id=#{skuId}
+        select price
+        from sku_info
+        where id = #{skuId}
     </select>
 
     <select id="getSkuIds" resultType="java.lang.Long">
-        select id from  sku_info
+        select id
+        from sku_info
+    </select>
+
+
+
+    <resultMap id="GoodsResultMap" type="com.atguigu.gmall.model.list.Goods" autoMapping="true">
+        <id property="id" column="id"></id>
+        <collection property="attrs" ofType="com.atguigu.gmall.model.list.SearchAttr"
+                    autoMapping="true">
+            <id property="attrId" column="attr_id"></id>
+        </collection>
+    </resultMap>
+    <select id="getGoodsInfoBySkuId" resultMap="GoodsResultMap">
+        select si.id              id,
+               si.sku_default_img default_img,
+               si.sku_name        title,
+               si.price           price,
+               si.tm_id           tm_id,
+               CURRENT_DATE() as  create_time,
+               bt.tm_name         tm_name,
+               bt.logo_url        tm_logo_url,
+               cv.id              category1_id,
+               cv.name            category1_name,
+               cv.c2Id            category2_id,
+               cv.c2name          category2_name,
+               cv.c3id            category3_id,
+               cv.c3name          category3_name,
+               sav.attr_id,
+               bai.attr_name,
+               bav.value_name     attr_value
+        from sku_info si
+                 left join base_trademark bt on bt.id = si.tm_id
+                 left join category_view cv on si.category3_id = cv.c3id
+                 left join sku_attr_value sav on si.id = sav.sku_id
+                 left join base_attr_info bai on sav.attr_id = bai.id
+                 left join base_attr_value bav on sav.attr_id = bav.attr_id and sav.value_id = bav.id
+        where si.id = #{skuId}
+
     </select>
 </mapper>

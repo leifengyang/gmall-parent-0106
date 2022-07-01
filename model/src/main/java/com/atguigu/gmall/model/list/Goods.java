@@ -18,11 +18,13 @@ public class Goods {
     @Id
     private Long id;
 
+    //Keyword 不要拆分，一个完整的关键字
     @Field(type = FieldType.Keyword, index = false)
-    private String defaultImg;
+    private String defaultImg; //自动决定，string text（全文检索，分词）；
+
 
     //  es 中能分词的字段，这个字段数据类型必须是 text！keyword 不分词！
-    @Field(type = FieldType.Text, analyzer = "ik_max_word")
+    @Field(type = FieldType.Text, analyzer = "ik_smart")
     private String title;
 
     @Field(type = FieldType.Double)
@@ -67,5 +69,9 @@ public class Goods {
     // Nested 支持嵌套查询
     @Field(type = FieldType.Nested)
     private List<SearchAttr> attrs;
+    //如果集合类的属性未来要检索，必须声明这是一个Nested；嵌套的，才能正确被检索
+    //每个的手机的平台属性都存起来,未来才能分析出，
+    //这些检索到的100个商品到底涉及到了那些属性和那些值?
+
 
 }

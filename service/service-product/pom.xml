@@ -46,6 +46,13 @@
             <artifactId>shardingsphere-jdbc-core-spring-boot-starter</artifactId>
             <version>5.1.1</version>
         </dependency>
+
+
+        <dependency>
+            <groupId>com.atguigu.gmall</groupId>
+            <artifactId>mall-feign-client</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 
 
