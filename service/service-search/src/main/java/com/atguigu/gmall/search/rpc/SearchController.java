@@ -9,6 +9,8 @@ import com.atguigu.gmall.search.service.GoodsSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RequestMapping("/rpc/inner/search")
 @RestController
 public class SearchController {
@@ -19,10 +21,19 @@ public class SearchController {
 
     /**
      * 商品检索
+     * 参数：
+     *    普通参数：  k=v&k=v&1000个
+     *              SearchParam param2；从请求参数中找到所有和javaBean属性一样的封装进去
+     *    文件上传项：
+     *              header=二进制流;@RequestPart("header") MultipartFile header
+     *              shz=二进制流;@RequestPart("shz") MultipartFile shz
+     *              sfzs=二进制流;二进制流;二进制流  @RequestPart("sfzs") MultipartFile[] sfzs
+     *              MultipartFile file
+     *    自定义参数： {k:v,k:v,k:v}   @RequestBody SearchParam param； 自己把json转成SearchParam
      * @return
      */
-    @PostMapping("/goods")
-    public Result<SearchResponseVo> search(@RequestBody SearchParam param){
+    @PostMapping ("/goods")
+    public Result<SearchResponseVo> search(@RequestBody SearchParam param, HttpServletRequest request){
 
         //检索
         SearchResponseVo vo = goodsSearchService.search(param);

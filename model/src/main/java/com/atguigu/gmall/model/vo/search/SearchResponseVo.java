@@ -16,6 +16,8 @@ public class SearchResponseVo {
     private SearchParam searchParam;
     //品牌面包屑
     private String trademarkParam;
+    //
+    private String urlParam;
 
     //属性面包屑
     private List<AttrBread>  propsParamList;
@@ -36,5 +38,5 @@ public class SearchResponseVo {
     private Long pageNo;
 
     //总页码
-    private Long totalPages;
+    private Integer totalPages;
 }

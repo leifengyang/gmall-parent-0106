@@ -4,4 +4,18 @@ spring:
   elasticsearch:
     rest:
       uris: http://192.168.200.100:9200
+#    TRACE, 追踪
+#    DEBUG, 调试
+#    INFO,  信息
+#    WARN,  警告
+#    ERROR, 错误
+#    FATAL, 致命错误
+#    OFF;   关闭日志
+logging:
+  level:
+    root: info
+    tracer: trace  #打开追踪器
+    org.springframework.data.elasticsearch: trace
+
+
 

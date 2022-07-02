@@ -1,0 +1,110 @@
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "term": {
+            "category3Id": {
+              "value": "61"
+            }
+          }
+        },
+        {
+          "match": {
+            "title": "手机"
+          }
+        },
+        {
+          "term": {
+            "tmId": {
+              "value": "4"
+            }
+          }
+        },
+        {
+          "nested": {
+            "path": "attrs",
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "term": {
+                      "attrs.attrId": {
+                        "value": "3"
+                      }
+                    }
+                  },
+                  {
+                    "term": {
+                      "attrs.attrValue": {
+                        "value": "6GB"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "sort": [
+    {
+      "price": {
+        "order": "asc"
+      }
+    }
+  ],
+  "from": 4,
+  "size": 2,
+  "aggs": {
+    "tmIdAgg": {
+      "terms": {
+        "field": "tmId",
+        "size": 100
+      },
+      "aggs": {
+        "tmNameAgg": {
+          "terms": {
+            "field": "tmName",
+            "size": 1
+          }
+        },
+        "tmLogoAgg": {
+          "terms": {
+            "field": "tmLogoUrl",
+            "size": 1
+          }
+        }
+      }
+    },
+    "attrAgg": {
+      "nested": {
+        "path": "attrs"
+      },
+      "aggs": {
+        "attrIdAgg": {
+          "terms": {
+            "field": "attrs.attrId",
+            "size": 100
+          },
+          "aggs": {
+            "attrNameAgg": {
+              "terms": {
+                "field": "attrs.attrName",
+                "size": 1
+              }
+            },
+            "attrValueAgg": {
+              "terms": {
+                "field": "attrs.attrValue",
+                "size": 100
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

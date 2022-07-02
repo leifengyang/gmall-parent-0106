@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -40,7 +41,10 @@ public class SearchController {
      * @return
      */
     @GetMapping("/list.html")
-    public String listPage(SearchParam param, Model model){
+    public String listPage(SearchParam param, Model model, HttpServletRequest request){
+        String uri = request.getRequestURI();
+        //+后面的参数
+        String queryString = request.getQueryString();
 
         //TODO 远程调用检索服务去检索
         Result<Map<String, Object>> search = searchFeignClient.search(param);
