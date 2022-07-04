@@ -22,6 +22,8 @@ public class ItemRpcController {
     @Autowired
     ItemService itemService;
 
+
+
     /**
      * Java8以后；流式编程
      * StreamAPI；
@@ -33,7 +35,10 @@ public class ItemRpcController {
     @GetMapping("/sku/{skuId}")
     public Result<SkuDetailVo> getSkuDetail(@PathVariable("skuId")Long skuId){
 
+        //1、查询详情
         SkuDetailVo skuDetailVo =  itemService.getItemDetail(skuId);
+        //2、增加热度分
+        itemService.incrHotScore(skuId);
 
         return Result.ok(skuDetailVo);
     }

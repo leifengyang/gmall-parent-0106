@@ -3,6 +3,7 @@ package com.atguigu.gmall.item.service.impl;
 import com.atguigu.gmall.common.constant.RedisConst;
 import com.atguigu.gmall.common.result.Result;
 import com.atguigu.gmall.feign.product.SkuFeignClient;
+import com.atguigu.gmall.feign.search.SearchFeignClient;
 import com.atguigu.gmall.starter.cache.annotation.Cache;
 import com.atguigu.gmall.starter.cache.component.CacheService;
 import com.atguigu.gmall.item.service.ItemService;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 
@@ -40,6 +42,12 @@ public class ItemServiceImpl implements ItemService {
 
     @Autowired
     CacheService cacheService;
+
+    @Autowired
+    SearchFeignClient searchFeignClient;
+
+    @Autowired
+    ThreadPoolExecutor threadPoolExecutor;
 
 
     /**
@@ -72,9 +80,19 @@ public class ItemServiceImpl implements ItemService {
         return getItemDetailFromRpc(skuId);
     }
 
-
-
-
+    @Override
+    public void incrHotScore(Long skuId) {
+        //1、积攒
+        Long increment = redisTemplate.opsForValue().increment(RedisConst.SKU_HOTSCORE+skuId);
+        if(increment % 100 == 0){
+            //更新频率不要频繁。异步
+            //理论上线程超过核心数的2倍，就再多就没意义。每一个异步不能上来就开线程
+            //线程池： 16  32  queue
+            CompletableFuture.runAsync(()->{
+                searchFeignClient.incrHotScore(skuId,increment);
+            },threadPoolExecutor);
+        }
+    }
 
 
     /**

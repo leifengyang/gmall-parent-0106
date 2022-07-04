@@ -30,7 +30,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  */
 
 
-@EnableFeignClients(basePackages = {"com.atguigu.gmall.feign.product"}) //调谁导谁
+@EnableFeignClients(basePackages = {"com.atguigu.gmall.feign.product","com.atguigu.gmall.feign.search"}) //调谁导谁
 @SpringCloudApplication
 public class ItemMainApplication {
 

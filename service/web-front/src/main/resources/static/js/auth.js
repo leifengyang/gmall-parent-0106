@@ -4,7 +4,7 @@ var auth = {
         return $.cookie('token')
     },
 
-    setToken(token) {
+    setToken(token) { //只需要登录成功把令牌交给前端，他自己会把令牌放cookie，访问所有域名都带。
         return $.cookie('token', token, {domain: 'gmall.com', expires: 7, path: '/'})
     },
 

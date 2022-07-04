@@ -17,6 +17,7 @@
         <module>web-front</module>
         <module>service-item</module>
         <module>service-search</module>
+        <module>service-user</module>
     </modules>
 
     <properties>

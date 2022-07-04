@@ -24,8 +24,25 @@ spring:
           predicates:
             - Path=/admin/product/**
 
+        - id: user_route
+          uri: lb://service-user
+          predicates:
+            - Path=/api/user/**
+
 
         - id: front_route    #所有 域名的请求都来到 web-front 前端
           uri: lb://web-front
           predicates:
             - Host=**.gmall.com
+
+
+
+
+app:
+  auth:
+    login-page: http://passport.gmall.com/login.html
+    login-url:
+      - /order/**
+      - /incr
+    no-auth-url:
+      - /rpc/inner/**   #内部的rpc请求浏览器不能直接访问

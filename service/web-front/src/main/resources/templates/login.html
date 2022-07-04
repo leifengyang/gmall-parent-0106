@@ -116,6 +116,7 @@
             	/*后台就可以使用UserInfo 对象接收*/
                 login.login(this.user).then(response => {
                     //	debugger
+					// response.data = Result(code,data[token])
                     if (response.data.code == 200) {
                         //  把token存在cookie中、也可以放在localStorage中
 						//	result.ok(map);
@@ -127,6 +128,7 @@
                         auth.setToken(response.data.data.token)
 						//	response.data.data 相当于返回来的map
 						//	JSON.stringify(response.data.data) 将map 数据变为json对象，存储到cookie 中
+						//这个 response.data.data 是一个map。token，userInfo：{nickName}
                         auth.setUserInfo(JSON.stringify(response.data.data))
 
 						//	输入日志：是否有 originUrl 回跳url！

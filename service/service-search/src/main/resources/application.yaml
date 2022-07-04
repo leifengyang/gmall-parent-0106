@@ -1,3 +1,4 @@
+
 spring:
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
@@ -16,6 +17,7 @@ logging:
     root: info
     tracer: trace  #打开追踪器
     org.springframework.data.elasticsearch: trace
-
+server:
+  port: 11000
 
 

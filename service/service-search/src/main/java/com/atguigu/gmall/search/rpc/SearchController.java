@@ -66,6 +66,18 @@ public class SearchController {
         return Result.ok();
     }
 
+    /**
+     * 增加商品热度分
+     * @return
+     */
+    @GetMapping("/incr/hotscore/{skuId}")
+    public Result incrHotScore(@PathVariable("skuId") Long skuId,
+                               @RequestParam("score") Long score){
+
+        goodsSearchService.incrHotScore(skuId,score);
+        return Result.ok();
+    }
+
 
 
 }

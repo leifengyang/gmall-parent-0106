@@ -4,4 +4,6 @@ import com.atguigu.gmall.model.vo.SkuDetailVo;
 
 public interface ItemService {
     SkuDetailVo getItemDetail(Long skuId);
+
+    void incrHotScore(Long skuId);
 }

@@ -13,6 +13,9 @@ public class SearchTest {
     @Autowired
     GoodsSearchService searchService;
 
+
+
+
     @Test
     void searchTest(){
         SearchParam param = new SearchParam();

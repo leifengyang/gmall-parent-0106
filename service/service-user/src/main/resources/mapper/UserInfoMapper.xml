@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.gmall.user.mapper.UserInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.atguigu.gmall.model.user.UserInfo">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="loginName" column="login_name" jdbcType="VARCHAR"/>
+            <result property="nickName" column="nick_name" jdbcType="VARCHAR"/>
+            <result property="passwd" column="passwd" jdbcType="VARCHAR"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="phoneNum" column="phone_num" jdbcType="VARCHAR"/>
+            <result property="email" column="email" jdbcType="VARCHAR"/>
+            <result property="headImg" column="head_img" jdbcType="VARCHAR"/>
+            <result property="userLevel" column="user_level" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,login_name,nick_name,
+        passwd,name,phone_num,
+        email,head_img,user_level
+    </sql>
+    <select id="getUserByLoginNameAndPasswd" resultType="com.atguigu.gmall.model.user.UserInfo">
+        select * from user_info where  login_name=#{loginName} and passwd=#{passwd}
+    </select>
+</mapper>

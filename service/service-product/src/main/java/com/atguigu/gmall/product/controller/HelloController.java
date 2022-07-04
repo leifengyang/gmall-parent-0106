@@ -7,6 +7,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RestController
 public class HelloController {
 
@@ -31,13 +33,15 @@ public class HelloController {
     String port;
     //lock
     @GetMapping("/incr")
-    public String incr(){
+    public String incr(HttpServletRequest request){
+        String userId = request.getHeader("UserId");
         //1、取值
         System.out.println("="+port);
         int anInt = 0;
 //        synchronized (this){ //分布式下没用
 //
 //        }
+
         //加锁.锁的粒度越细。才能提升吞吐量
         Boolean lock = redisTemplate.opsForValue().setIfAbsent("lock", "1");
         while (!lock){ //阻塞式等锁  lock.lock();

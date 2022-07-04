@@ -20,14 +20,17 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.document.Document;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.Query;
+import org.springframework.data.elasticsearch.core.query.UpdateQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,6 +76,30 @@ public class GoodsSearchServiceImpl implements GoodsSearchService {
         SearchResponseVo vo = buildResponse(goods, param);
 
         return vo;
+    }
+
+    @Override
+    public void incrHotScore(Long skuId, Long score) {
+
+        //UpdateQuery query, IndexCoordinates index
+        UpdateQuery query = buildHotScoreUpdateQuery(skuId,score);
+        esTemplate.update(query,IndexCoordinates.of("goods"));
+
+    }
+
+    private UpdateQuery buildHotScoreUpdateQuery(Long skuId, Long score) {
+        //1、拿到builder
+        UpdateQuery.Builder builder = UpdateQuery.builder("" + skuId);
+
+        //2、 "hotScore" : 2
+        HashMap<String, Long> map = new HashMap<>();
+        map.put("hotScore",score);
+
+        builder.withDocument(Document.from(map))
+                .withDocAsUpsert(true);
+
+        return builder.build();
+
     }
 
     //3、把检索的结果封装成前端能用的对象
@@ -191,8 +218,8 @@ public class GoodsSearchServiceImpl implements GoodsSearchService {
         // order=2:desc
         //回显orderMap
         String order = param.getOrder(); //order=2:asc  order=1:desc
-        OrderMap orderMap = new OrderMap();
-        if(!StringUtils.isEmpty(order)){
+        OrderMap orderMap = new OrderMap(); //order=null
+        if(!StringUtils.isEmpty(order) && !"null".equalsIgnoreCase(order)){
             orderMap.setType(order.split(":")[0]);
             orderMap.setSort(order.split(":")[1]);
         }
