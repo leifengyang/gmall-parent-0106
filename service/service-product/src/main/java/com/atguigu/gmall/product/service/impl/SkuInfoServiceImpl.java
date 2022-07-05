@@ -1,12 +1,15 @@
 package com.atguigu.gmall.product.service.impl;
 
 import com.atguigu.gmall.common.constant.RedisConst;
+import com.atguigu.gmall.common.util.AuthContextHolder;
 import com.atguigu.gmall.feign.search.SearchFeignClient;
+import com.atguigu.gmall.model.cart.CartInfo;
 import com.atguigu.gmall.model.list.Goods;
 import com.atguigu.gmall.model.product.SkuAttrValue;
 import com.atguigu.gmall.model.product.SkuImage;
 import com.atguigu.gmall.model.product.SkuInfo;
 import com.atguigu.gmall.model.product.SkuSaleAttrValue;
+import com.atguigu.gmall.model.vo.user.UserAuth;
 import com.atguigu.gmall.product.mapper.SkuInfoMapper;
 import com.atguigu.gmall.product.service.SkuAttrValueService;
 import com.atguigu.gmall.product.service.SkuImageService;
@@ -22,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -168,6 +172,45 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
 
         Goods goods = skuInfoMapper.getGoodsInfoBySkuId(skuId);
         return goods;
+    }
+
+    @Override
+    public CartInfo getCartInfoBySkuId(Long skuId) {
+        CartInfo cartInfo = new CartInfo();
+        UserAuth userAuth = AuthContextHolder.getUserAuth();
+        if(userAuth.getUserId()!=null){
+            cartInfo.setUserId(userAuth.getUserId().toString());
+        }else {
+            cartInfo.setUserId(userAuth.getTempId());
+        }
+
+        cartInfo.setSkuId(skuId);
+        cartInfo.setId(cartInfo.getId());
+
+        //查价格
+        BigDecimal skuPrice = skuInfoMapper.getSkuPrice(skuId);
+        cartInfo.setCartPrice(skuPrice);
+
+        cartInfo.setSkuNum(null);
+
+        SkuInfo skuInfo = skuInfoMapper.selectById(skuId);
+        cartInfo.setImgUrl(skuInfo.getSkuDefaultImg());
+        cartInfo.setSkuName(skuInfo.getSkuName());
+        //默认被选中
+        cartInfo.setIsChecked(1);
+
+        cartInfo.setCreateTime(new Date());
+        cartInfo.setUpdateTime(new Date());
+
+        //商品实时价格
+        cartInfo.setSkuPrice(skuPrice);  //未来价格发生变动的话，需要改购物车
+
+        cartInfo.setCouponInfoList(null);
+
+
+
+
+        return cartInfo;
     }
 }
 

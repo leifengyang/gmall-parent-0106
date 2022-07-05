@@ -2,6 +2,7 @@ package com.atguigu.gmall.feign.product;
 
 
 import com.atguigu.gmall.common.result.Result;
+import com.atguigu.gmall.model.cart.CartInfo;
 import com.atguigu.gmall.model.product.SkuInfo;
 import com.atguigu.gmall.model.product.SpuSaleAttr;
 import com.atguigu.gmall.model.vo.CategoryView;
@@ -18,6 +19,9 @@ import java.util.List;
 //不同feignclient用了同一个 @FeignClient 的名字就得开启 bean定义信息重写功能
 
 public interface SkuFeignClient {
+
+    @GetMapping("/cartinfo/{skuId}")
+    Result<CartInfo> getCartInfoBySkuId(@PathVariable("skuId") Long skuId);
 
     /**
      * 查询skuInfo信息

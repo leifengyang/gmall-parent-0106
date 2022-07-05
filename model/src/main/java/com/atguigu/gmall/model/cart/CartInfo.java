@@ -8,10 +8,10 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
-@Data
+@Data  //完全不用数据库
 @ApiModel(description = "购物车")
 public class CartInfo extends BaseEntity {
     private static final long serialVersionUID = 1L;
@@ -26,7 +26,7 @@ public class CartInfo extends BaseEntity {
 
     @ApiModelProperty(value = "放入购物车时价格")
     @TableField("cart_price")
-    private BigDecimal cartPrice;
+    private BigDecimal cartPrice;  //记录这个商品第一次放入购物车的价格
 
     @ApiModelProperty(value = "数量")
     @TableField("sku_num")
@@ -46,19 +46,19 @@ public class CartInfo extends BaseEntity {
 
     //  ,fill = FieldFill.INSERT
     @TableField(value = "create_time")
-    private Timestamp createTime;
+    private Date createTime;
 
     //  ,fill = FieldFill.INSERT_UPDATE)
     @TableField(value = "update_time")
-    private Timestamp updateTime;
+    private Date updateTime;
 
     // 实时价格 skuInfo.price
     @TableField(exist = false)
-    BigDecimal skuPrice;
+    BigDecimal skuPrice;  //购物车列表页显示的实时价格。 促销会对比实时和第一次的价格
 
     //  优惠券信息列表
     @ApiModelProperty(value = "购物项对应的优惠券信息")
     @TableField(exist = false)
-    private List<CouponInfo> couponInfoList;
+    private List<CouponInfo> couponInfoList;  //
 
 }

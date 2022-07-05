@@ -12,6 +12,7 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -83,33 +84,78 @@ public class GlobalAuthFilter implements GlobalFilter {
         if (pathMatch(authProperties.getLoginUrl(), path)) {
             //3、验证登录的用户； 拿到令牌
             String token = getToken(request);
-            UserInfo info = validToken(token);
-            if (info != null) {
-                //4、校验token 通过
-                Long id = info.getId();
-                //5、放行之前，需要给请求头中加一个 UserId 字段。
-                //request 是不允许改的。我们需要创建一个新的
-                ServerHttpRequest newReq = request.mutate()
-                        .header("UserId", id.toString())
-                        .build();
-
-                ServerWebExchange newExchange = exchange.mutate()
-                        .request(newReq)
-                        .response(response)
-                        .build();
-
-                //6、放行
-                return chain.filter(newExchange);
-            } else {
-                //5、校验token 不通过。 打回登录页，去登录
-                log.info("用户令牌【{}】非法，打回登录页", token);
-                return locationToPage(response, authProperties.getLoginPage());
-            }
+            return checkTokenOrRedirect(exchange, chain, request, response, token);
         }
 
 
-        //3、既不是非法请求，又无需登录
-        return chain.filter(exchange);
+        //3、如果已经登录了，进行操作addCart。但是addCart不是需要登录的
+        //如果已经登录了，无论这个请求是什么，都可以把用户id透传下去。
+        String token = getToken(request);
+        if(!StringUtils.isEmpty(token)){
+            //说明请求带token
+            return checkTokenOrRedirect(exchange, chain, request, response, token);
+        }
+
+
+        //4、没有就直接放行。放行之前也要把可能携带的临时id透传下去
+        String tempId = getTempId(exchange);
+        //5、放行之前，需要给请求头中加一个 UserId 字段。
+        //request 是不允许改的。我们需要创建一个新的
+
+        ServerWebExchange newExchange = exchange
+                .mutate()
+                .request(request.mutate()
+                        .header("UserTempId",tempId)
+                        .build())
+                .response(response)
+                .build();
+
+        //6、放行
+        return chain.filter(newExchange);
+    }
+
+    private Mono<Void> checkTokenOrRedirect(ServerWebExchange exchange, GatewayFilterChain chain, ServerHttpRequest request, ServerHttpResponse response, String token) {
+        UserInfo info = validToken(token);
+        if (info != null) {
+            //4、校验token 通过
+            Long id = info.getId();
+            String tempId = getTempId(exchange);
+            //5、放行之前，需要给请求头中加一个 UserId 字段。
+            //request 是不允许改的。我们需要创建一个新的
+            ServerHttpRequest newReq = request.mutate()
+                    .header("UserId", id.toString())
+                    .header("UserTempId",tempId)
+                    .build();
+
+            ServerWebExchange newExchange = exchange.mutate()
+                    .request(newReq)
+                    .response(response)
+                    .build();
+
+            //6、放行
+            return chain.filter(newExchange);
+        } else {
+            //5、校验token 不通过。 打回登录页，去登录
+            log.info("用户令牌【{}】非法，打回登录页", token);
+            return locationToPage(response, authProperties.getLoginPage());
+        }
+    }
+
+    private String getTempId(ServerWebExchange exchange) {
+        ServerHttpRequest request = exchange.getRequest();
+        String id = "";
+        //1、先看Cookie有没有
+        HttpCookie cookie = request.getCookies().getFirst("userTempId");
+        if(cookie!=null){
+            id = cookie.getValue(); // token=""
+            if (StringUtils.isEmpty(id)){
+                id = request.getHeaders().getFirst("userTempId");
+            }
+        }else {
+            //2、尝试去token头中取
+            id = request.getHeaders().getFirst("token");
+        }
+        return id;
     }
 
 
@@ -172,12 +218,20 @@ public class GlobalAuthFilter implements GlobalFilter {
      * @return
      */
     private String getToken(ServerHttpRequest request) {
+        String token = "";
         //1、先看Cookie有没有
-        String token = request.getCookies().getFirst("token").getValue();
-        if (StringUtils.isEmpty(token)) {
+        HttpCookie cookie = request.getCookies().getFirst("token");
+        if(cookie!=null){
+            token = cookie.getValue(); // token=""
+            if (StringUtils.isEmpty(token)){
+                token = request.getHeaders().getFirst("token");
+            }
+        }else {
             //2、尝试去token头中取
             token = request.getHeaders().getFirst("token");
         }
+
+
         return token;
     }
 
