@@ -8,3 +8,28 @@ spring:
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
+
+
+#配置feign客户端
+#feign:
+#  client:
+#    config:
+#      default:   #默认配置
+#        connectTimeout: 1000  #对方是由于下线了，只会等1s
+#        readTimeout: 5000   #默认只有1s，默认重试1次，第一次请求就能通了。
+#        #对方服务器卡顿，这个等待时间应该大一点？3~10s合适。太长等待时间的业务不适合远程调用。考虑用消息队列进行异步交互
+#        retryer: com.atguigu.gmall.common.retry.RequestNeverRetryer  #默认Default重试器试5次
+
+#      service-product: #每个远程自己的配置
+#        connectTimeout: 1000  #对方是由于下线了，只会等1s
+#        readTimeout: 5000   #默认只有1s，默认重试1次，第一次请求就能通了。
+#        #对方服务器卡顿，这个等待时间应该大一点，3~10s合适。太长等待时间的业务不适合远程调用。考虑用消息队列进行异步交互
+#        retryer: com.atguigu.gmall.common.retry.RequestNeverRetryer  #默认Default重试器试5次
+#        requestInterceptors:
+#          - aaaa
+#          - bbbb
+
+#      service-cart:
+
+
+

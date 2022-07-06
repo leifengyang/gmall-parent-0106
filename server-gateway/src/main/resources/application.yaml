@@ -29,6 +29,11 @@ spring:
           predicates:
             - Path=/api/user/**
 
+        - id: cart_route
+          uri: lb://service-cart
+          predicates:
+            - Path=/api/cart/**
+
 
         - id: front_route    #所有 域名的请求都来到 web-front 前端
           uri: lb://web-front

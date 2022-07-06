@@ -60,8 +60,9 @@ public class CategoryRpcController {
 
 
     @GetMapping("/categorys/all")
-    public Result<List<CategoryVo>> getCategorysRedis(){
-
+    public Result<List<CategoryVo>> getCategorysRedis() throws InterruptedException {
+        System.out.println("正在获取菜单...");
+//        Thread.sleep(2000);
         List<CategoryVo> vos =   categoryBizService.getCategorys();
 
         return Result.ok(vos);

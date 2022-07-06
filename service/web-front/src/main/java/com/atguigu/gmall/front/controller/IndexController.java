@@ -21,7 +21,7 @@ public class IndexController {
     @Autowired
     CategoryFeignClient categoryFeignClient;
 
-    @GetMapping("/")
+    @GetMapping({"/","/index.html"})
     public String indexPage(Model model){
 
         //远程调用商品服务=查询出三级分类数据。

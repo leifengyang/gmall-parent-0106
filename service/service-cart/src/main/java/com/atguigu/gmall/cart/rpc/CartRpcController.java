@@ -1,4 +1,4 @@
-package com.atguigu.gmall.cart.rcp;
+package com.atguigu.gmall.cart.rpc;
 
 
 import com.atguigu.gmall.cart.service.CartService;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/rpc/inner/cart")
 @RestController
-public class CartController {
+public class CartRpcController {
 
 
     @Autowired
@@ -25,12 +25,24 @@ public class CartController {
         //获取当前用户信息. 隐式透传
 //        UserAuth auth = AuthContextHolder.getUserAuth();
 
-        //TODO 添加商品到购物车
         AddSuccessVo vo =  cartService.addToCart(skuId,num);
 
 
 
         return Result.ok(vo);
+    }
+
+
+    /**
+     * 删除选中的所有商品
+     * @return
+     */
+    @GetMapping("/delete/checked")
+    public Result deleteChecked(){
+
+        cartService.deleteChecked();
+
+        return Result.ok();
     }
 }
 

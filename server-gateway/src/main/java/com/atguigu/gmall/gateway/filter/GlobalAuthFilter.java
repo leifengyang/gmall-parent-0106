@@ -153,7 +153,7 @@ public class GlobalAuthFilter implements GlobalFilter {
             }
         }else {
             //2、尝试去token头中取
-            id = request.getHeaders().getFirst("token");
+            id = request.getHeaders().getFirst("userTempId");
         }
         return id;
     }

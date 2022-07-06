@@ -57,7 +57,21 @@ public interface SkuFeignClient {
     Result<String> getSpudeAllSkuSaleAttrAndValue(@PathVariable("spuId") Long spuId);
 
 
+    /**
+     * 快速获取价格：从缓存
+     * @param skuId
+     * @return
+     */
     @GetMapping("/sku/price/{skuId}")
     public Result<BigDecimal> getSkuPrice(@PathVariable("skuId") Long skuId);
+
+
+    /**
+     * 实时获取价格：从数据
+     * @param skuId
+     * @return
+     */
+    @GetMapping("/sku/price/shishi/{skuId}")
+    public Result<BigDecimal> get1010SkuPrice(@PathVariable("skuId") Long skuId);
 
 }

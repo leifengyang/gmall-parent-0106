@@ -48,4 +48,23 @@ public class CartController {
 //        threadLocal.remove();
         return "cart/addCart";
     }
+
+
+
+    @GetMapping("/cart.html")
+    public String cartList(){
+
+        return "cart/index";
+    }
+
+
+    /**
+     * 删除购物车中选中的商品
+     * @return
+     */
+    @GetMapping("/cart/deleteChecked")
+    public String deleteChecked(){
+        cartFeignClient.deleteChecked();
+        return "cart/index";
+    }
 }
