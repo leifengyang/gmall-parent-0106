@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.gmall.order.mapper.OrderInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.atguigu.gmall.model.order.OrderInfo">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="consignee" column="consignee" jdbcType="VARCHAR"/>
+            <result property="consigneeTel" column="consignee_tel" jdbcType="VARCHAR"/>
+            <result property="totalAmount" column="total_amount" jdbcType="DECIMAL"/>
+            <result property="orderStatus" column="order_status" jdbcType="VARCHAR"/>
+            <result property="userId" column="user_id" jdbcType="BIGINT"/>
+            <result property="paymentWay" column="payment_way" jdbcType="VARCHAR"/>
+            <result property="deliveryAddress" column="delivery_address" jdbcType="VARCHAR"/>
+            <result property="orderComment" column="order_comment" jdbcType="VARCHAR"/>
+            <result property="outTradeNo" column="out_trade_no" jdbcType="VARCHAR"/>
+            <result property="tradeBody" column="trade_body" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="expireTime" column="expire_time" jdbcType="TIMESTAMP"/>
+            <result property="processStatus" column="process_status" jdbcType="VARCHAR"/>
+            <result property="trackingNo" column="tracking_no" jdbcType="VARCHAR"/>
+            <result property="parentOrderId" column="parent_order_id" jdbcType="BIGINT"/>
+            <result property="imgUrl" column="img_url" jdbcType="VARCHAR"/>
+            <result property="provinceId" column="province_id" jdbcType="BIGINT"/>
+            <result property="operateTime" column="operate_time" jdbcType="TIMESTAMP"/>
+            <result property="activityReduceAmount" column="activity_reduce_amount" jdbcType="DECIMAL"/>
+            <result property="couponAmount" column="coupon_amount" jdbcType="DECIMAL"/>
+            <result property="originalTotalAmount" column="original_total_amount" jdbcType="DECIMAL"/>
+            <result property="feightFee" column="feight_fee" jdbcType="DECIMAL"/>
+            <result property="refundableTime" column="refundable_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,consignee,consignee_tel,
+        total_amount,order_status,user_id,
+        payment_way,delivery_address,order_comment,
+        out_trade_no,trade_body,create_time,
+        expire_time,process_status,tracking_no,
+        parent_order_id,img_url,province_id,
+        operate_time,activity_reduce_amount,coupon_amount,
+        original_total_amount,feight_fee,refundable_time
+    </sql>
+</mapper>

@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
@@ -20,9 +21,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+@ToString
 @Data
 @ApiModel(description = "订单信息")
-@TableName("order_info")
+@TableName("order_info") //逻辑表；分库分表后。TableName 指定逻辑表名。
+// select * from order_info(逻辑表)
+// select * from order_info_0(真实表)
 public class OrderInfo extends BaseEntity {
     private static final long serialVersionUID = 1L;
 

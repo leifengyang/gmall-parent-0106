@@ -1,0 +1,21 @@
+server:
+  port: 14000
+spring:
+  profiles:
+    include: sharding
+  main:
+    allow-bean-definition-overriding: true
+
+
+
+
+
+
+
+app:
+  threadpool:
+    core-pool-size: 4
+    maximum-pool-size: 8
+    work-queue-size: 200
+    keep-alive-time: 60
+

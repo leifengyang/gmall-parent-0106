@@ -19,6 +19,7 @@
         <module>service-search</module>
         <module>service-user</module>
         <module>service-cart</module>
+        <module>service-order</module>
     </modules>
 
     <properties>

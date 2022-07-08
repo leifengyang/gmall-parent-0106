@@ -96,7 +96,7 @@
 											<div class="num" th:text="'X'+${detail.skuNum}">{{item.skuNum}}</div>
 										</li>
 										<li class="yui3-u-1-12">
-											<div class="exit">有货</div>
+											<div class="exit" th:text="${detail.stock == '1'?'有货~':'无货~'}">有货</div>
 										</li>
 									</ul>
 

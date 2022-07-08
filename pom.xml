@@ -9,6 +9,7 @@
         <module>model</module>
         <module>server-gateway</module>
         <module>mall-cache-starter</module>
+        <module>ware-manage</module>
     </modules>
 
     <!--    springboot作为整个父项目哈哈呵呵111 -->

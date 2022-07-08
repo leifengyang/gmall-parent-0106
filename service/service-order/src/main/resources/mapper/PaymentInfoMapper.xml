@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.gmall.order.mapper.PaymentInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.atguigu.gmall.model.payment.PaymentInfo">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="outTradeNo" column="out_trade_no" jdbcType="VARCHAR"/>
+        <result property="orderId" column="order_id" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="paymentType" column="payment_type" jdbcType="VARCHAR"/>
+        <result property="tradeNo" column="trade_no" jdbcType="VARCHAR"/>
+        <result property="totalAmount" column="total_amount" jdbcType="DECIMAL"/>
+        <result property="subject" column="subject" jdbcType="VARCHAR"/>
+        <result property="paymentStatus" column="payment_status" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="callbackTime" column="callback_time" jdbcType="TIMESTAMP"/>
+        <result property="callbackContent" column="callback_content" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        ,out_trade_no,order_id,user_id,
+        payment_type,trade_no,total_amount,
+        subject,payment_status,create_time,
+        callback_time,callback_content
+    </sql>
+</mapper>

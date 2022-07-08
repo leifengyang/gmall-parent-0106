@@ -49,5 +49,6 @@ app:
     login-url:
       - /order/**
       - /incr
+      - /trade.html
     no-auth-url:
       - /rpc/inner/**   #内部的rpc请求浏览器不能直接访问
