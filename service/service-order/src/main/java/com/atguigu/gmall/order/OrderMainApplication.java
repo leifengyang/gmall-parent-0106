@@ -1,6 +1,7 @@
 package com.atguigu.gmall.order;
 
 
+import com.atguigu.gmall.common.annotation.EnableAutoHandleException;
 import com.atguigu.gmall.common.annotation.EnableFeignInterceptor;
 import com.atguigu.gmall.common.annotation.EnableThreadPool;
 import org.mybatis.spring.annotation.MapperScan;
@@ -9,6 +10,11 @@ import org.springframework.cloud.client.SpringCloudApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 
+
+
+
+
+@EnableAutoHandleException
 @EnableFeignInterceptor
 @EnableFeignClients(basePackages = {
         "com.atguigu.gmall.feign.user",

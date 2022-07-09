@@ -14,6 +14,7 @@ import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
@@ -171,6 +172,23 @@ public class GlobalAuthFilter implements GlobalFilter {
         // (2xx  3xx)失败  (4xx[客户端失败] 5xx[服务器完蛋])失败
         response.setStatusCode(HttpStatus.FOUND);
         response.getHeaders().set("Location", loginPage);
+        //2、如何让浏览器删除假token。 浏览器把 token 存到 Cookie 中。
+        //给浏览器发送一个同名cookie，maxAge = 0；立即删除
+        //JESSIONID=5402853408;
+        //cookie的time： 正数：指定直接秒以后过期，  0：立即过期（删除）   负数：浏览器关了就会删除（会话，session-cookie）
+        ResponseCookie cookie = ResponseCookie.from("token", "xxxx")
+                .maxAge(0)
+                .domain(".gmall.com")
+                .path("/")
+                .build();
+        //
+        ResponseCookie infoCookie = ResponseCookie.from("userInfo", "xx")
+                .maxAge(0)
+                .domain(".gmall.com")
+                .path("/")
+                .build();
+        response.addCookie(cookie);
+        response.addCookie(infoCookie);
         return response.setComplete(); //响应结束
     }
 

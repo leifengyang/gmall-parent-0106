@@ -23,6 +23,7 @@ public class BloomConfiguration {
     //第一次项目启动的时候初始化布隆
     //SpringBoot应用一启动以后，会从容器中拿到 ApplicationRunner，执行他们的run方法
 
+
     @Bean
     public ApplicationRunner applicationRunner(){
        return new ApplicationRunner(){

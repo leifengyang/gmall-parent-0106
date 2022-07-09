@@ -34,6 +34,10 @@ spring:
           predicates:
             - Path=/api/cart/**
 
+        - id: order_route
+          uri: lb://service-order
+          predicates:
+            - Path=/api/order/**
 
         - id: front_route    #所有 域名的请求都来到 web-front 前端
           uri: lb://web-front
@@ -50,5 +54,6 @@ app:
       - /order/**
       - /incr
       - /trade.html
+      - /**/auth/**
     no-auth-url:
       - /rpc/inner/**   #内部的rpc请求浏览器不能直接访问

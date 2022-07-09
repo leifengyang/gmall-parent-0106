@@ -1,0 +1,16 @@
+{
+  "consignee": "atguigu666",
+  "consigneeTel": "13833456789",
+  "deliveryAddress": "北京市大兴区",
+  "orderComment": "",
+  "orderDetailList": [
+    {
+      "imgUrl": "http://192.168.200.100:9000/gmall/5818cb852edd4a25a6eee7e3e1d9edca_1.png",
+      "skuName": " 诺基亚C20 Plus 蓝色 8+128 超拉风",
+      "orderPrice": 799,
+      "skuNum": 4,
+      "stock": "1",
+      "skuId": 41
+    }
+  ]
+}

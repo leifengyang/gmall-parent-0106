@@ -16,4 +16,6 @@ public class RedisConst {
     public static final String CART_INFO_PREFIX = "cart:info:";
     public static final Integer CART_SIZE_LIMIT = 200;
     public static final String SKU_PRICE_CACHE_PREFIX = "sku:price:"; //sku:price:49
+    public static final String TRADE_TOKEN_PREFIX = "trade:token:"; //交易防重令牌
+    public static final String A_KEN_VALUE = "x"; //一个占坑用的值
 }

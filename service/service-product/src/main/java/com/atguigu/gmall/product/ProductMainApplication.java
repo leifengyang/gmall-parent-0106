@@ -1,6 +1,7 @@
 package com.atguigu.gmall.product;
 
 
+import com.atguigu.gmall.common.annotation.EnableAutoHandleException;
 import com.atguigu.gmall.common.config.Swagger2Config;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -39,7 +40,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 //@EnableCache
 //@EnableRedisson  //导入Redisson的配置
 
-
+@EnableAutoHandleException
 @EnableScheduling //开启定时调度
 @EnableFeignClients(basePackages = "com.atguigu.gmall.feign.search")
 @EnableTransactionManagement  //开启基于注解的自动事务管理
@@ -49,6 +50,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class ProductMainApplication {
 
     public static void main(String[] args) {
+        //1、ApplicationRunner、CommandLineRunner  容器启动完成以后会调用这些观察者
+
+        //2、SpringApplicationRunListener:  观察者模式完成的事件机制
         SpringApplication.run(ProductMainApplication.class,args);
     }
 }
