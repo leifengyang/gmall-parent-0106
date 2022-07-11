@@ -36,4 +36,11 @@ public interface OrderBizService {
      * @param order
      */
     OrderInfo saveOrder(String tradeNo,OrderSubmitVo order);
+
+    /**
+     * 关闭用户订单
+     * @param orderId
+     * @param userId
+     */
+    void closeOrder(Long orderId, Long userId);
 }

@@ -43,4 +43,14 @@ public class OrderController {
 
         return "order/trade";
     }
+
+
+    /**
+     * 订单列表页：myOrder.html
+     */
+    @GetMapping("/myOrder.html")
+    public String orderListPage(){
+        //TODO  列表页数据填充
+        return "order/myOrder";
+    }
 }

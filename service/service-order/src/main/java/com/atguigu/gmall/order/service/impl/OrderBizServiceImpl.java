@@ -1,5 +1,6 @@
 package com.atguigu.gmall.order.service.impl;
 
+import com.atguigu.gmall.common.constant.MqConst;
 import com.atguigu.gmall.common.constant.RedisConst;
 import com.atguigu.gmall.common.execption.GmallException;
 import com.atguigu.gmall.common.result.Result;
@@ -15,12 +16,14 @@ import com.atguigu.gmall.model.enums.OrderStatus;
 import com.atguigu.gmall.model.enums.ProcessStatus;
 import com.atguigu.gmall.model.order.OrderInfo;
 import com.atguigu.gmall.model.order.OrderStatusLog;
+import com.atguigu.gmall.model.to.mq.OrderCreateMsg;
 import com.atguigu.gmall.model.vo.order.CartOrderDetailVo;
 import com.atguigu.gmall.model.vo.order.OrderConfirmVo;
 import com.atguigu.gmall.model.vo.order.OrderSubmitVo;
 import com.atguigu.gmall.order.service.OrderBizService;
 import com.atguigu.gmall.order.service.OrderInfoService;
 import com.atguigu.gmall.order.service.OrderStatusLogService;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -64,6 +67,9 @@ public class OrderBizServiceImpl implements OrderBizService {
 
     @Autowired
     OrderStatusLogService orderStatusLogService;
+
+    @Autowired
+    RabbitTemplate rabbitTemplate;
 
     ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(16);
 
@@ -246,11 +252,15 @@ public class OrderBizServiceImpl implements OrderBizService {
 
         //解决 异步延迟任务丢失问题：使用分布式任务框架 【xxl-job、Elastic-Job】
 
-        //4、
 
-
-
+        //5、发送消息给MQ； //orderId、userId、totalAmout、status
+        OrderCreateMsg msg = prepareOrderMsg(info);
+        rabbitTemplate.convertAndSend(MqConst.EXCHANGE_ORDER_EVENT,MqConst.RK_ORDER_CREATE,JSONs.toStr(msg));
         return info.getId(); //"返回订单id";
+    }
+
+    private OrderCreateMsg prepareOrderMsg(OrderInfo info) {
+        return  new OrderCreateMsg(info.getId(),info.getUserId(),info.getTotalAmount(),info.getOrderStatus());
     }
 
 //    @Scheduled(cron = "* */30 * * * ?")
@@ -274,6 +284,18 @@ public class OrderBizServiceImpl implements OrderBizService {
         orderStatusLogService.save(log);
 
         return orderInfo;
+    }
+
+    @Transactional
+    @Override
+    public void closeOrder(Long orderId, Long userId) {
+        ProcessStatus closeStatus = ProcessStatus.CLOSED;
+
+        //1、修改订单状态为已关闭
+        orderInfoService.updateOrderStatus(orderId,userId,
+                closeStatus.getOrderStatus().name(),closeStatus.name(),ProcessStatus.UNPAID.name());
+
+
     }
 
     private OrderStatusLog prepareOrderStatusLog(OrderInfo orderInfo) {

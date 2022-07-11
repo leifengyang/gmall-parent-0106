@@ -131,7 +131,10 @@
 															</ul>
 														</td>
 														<td :rowspan="order.orderDetailList.length" width="8%" class="center">
-															<a href="#" class="btn">{{order.orderStatusName}} </a>
+<!--															<a href="#" class="btn">{{order.orderStatus}} </a>-->
+															<a href="#" class="btn" v-if="order.orderStatus == 'UNPAID'">未支付 </a>
+															<a href="#" class="btn" v-if="order.orderStatus == 'PAID'">已支付 </a>
+															<a href="#" class="btn" v-if="order.orderStatus == 'CLOSED'">已关闭 </a>
 														</td>
 														<td :rowspan="order.orderDetailList.length" width="13%" class="center">
 															<ul class="unstyled">
