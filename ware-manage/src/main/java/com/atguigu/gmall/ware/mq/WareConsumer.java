@@ -60,6 +60,7 @@ public class WareConsumer {
         List<WareOrderTask> wareSubOrderTaskList = gwareService.checkOrderSplit(wareOrderTask);
         if (wareSubOrderTaskList != null && wareSubOrderTaskList.size() >= 2) {
             for (WareOrderTask orderTask : wareSubOrderTaskList) {
+                orderTask.setUserId(wareOrderTask.getUserId());
                 gwareService.lockStock(orderTask);
             }
         } else {

@@ -14,15 +14,22 @@ import com.atguigu.gmall.feign.ware.WareFeignClient;
 import com.atguigu.gmall.model.cart.CartInfo;
 import com.atguigu.gmall.model.enums.OrderStatus;
 import com.atguigu.gmall.model.enums.ProcessStatus;
+import com.atguigu.gmall.model.order.OrderDetail;
 import com.atguigu.gmall.model.order.OrderInfo;
 import com.atguigu.gmall.model.order.OrderStatusLog;
 import com.atguigu.gmall.model.to.mq.OrderCreateMsg;
+import com.atguigu.gmall.model.to.mq.WareStockDetail;
 import com.atguigu.gmall.model.vo.order.CartOrderDetailVo;
 import com.atguigu.gmall.model.vo.order.OrderConfirmVo;
 import com.atguigu.gmall.model.vo.order.OrderSubmitVo;
+import com.atguigu.gmall.model.vo.ware.OrderSpiltVo;
+import com.atguigu.gmall.model.vo.ware.OrderSplitRespVo;
+import com.atguigu.gmall.model.vo.ware.WareFenBuVo;
 import com.atguigu.gmall.order.service.OrderBizService;
+import com.atguigu.gmall.order.service.OrderDetailService;
 import com.atguigu.gmall.order.service.OrderInfoService;
 import com.atguigu.gmall.order.service.OrderStatusLogService;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -33,10 +40,7 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
@@ -70,6 +74,9 @@ public class OrderBizServiceImpl implements OrderBizService {
 
     @Autowired
     RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    OrderDetailService orderDetailService;
 
     ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(16);
 
@@ -163,7 +170,7 @@ public class OrderBizServiceImpl implements OrderBizService {
         //1、生成令牌
         String token = UUID.randomUUID().toString().replace("-", "");
         //2、给redis一份;  trade:token:uuid； 10分钟过期，页面10分钟不动就必须重新刷新
-        redisTemplate.opsForValue().set(RedisConst.TRADE_TOKEN_PREFIX + token,RedisConst.A_KEN_VALUE,10, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(RedisConst.TRADE_TOKEN_PREFIX + token, RedisConst.A_KEN_VALUE, 10, TimeUnit.MINUTES);
         return token;
     }
 
@@ -171,7 +178,7 @@ public class OrderBizServiceImpl implements OrderBizService {
     //原子验令牌
     @Override
     public boolean checkTradeToken(String token) {
-        String scrpit =  "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
+        String scrpit = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
         Long execute = redisTemplate.execute(new DefaultRedisScript<>(scrpit, Long.class),
                 Arrays.asList(RedisConst.TRADE_TOKEN_PREFIX + token),
                 RedisConst.A_KEN_VALUE);
@@ -182,7 +189,7 @@ public class OrderBizServiceImpl implements OrderBizService {
     public Long submitOrder(String tradeNo, OrderSubmitVo order) {
         //1、验令牌
         boolean token = checkTradeToken(tradeNo);
-        if(!token){
+        if (!token) {
             throw new GmallException(ResultCodeEnum.ORDER_INVAILD_TOKEN);
         }
 
@@ -196,11 +203,11 @@ public class OrderBizServiceImpl implements OrderBizService {
                 }).map(item -> item.getSkuName())
                 .collect(Collectors.toList());
 
-        if(noStockSku!=null && noStockSku.size()>0){
+        if (noStockSku != null && noStockSku.size() > 0) {
             GmallException exception = new GmallException(
-                    ResultCodeEnum.ORDER_ITEM_NO_STOCK.getMessage()+ JSONs.toStr(noStockSku),
+                    ResultCodeEnum.ORDER_ITEM_NO_STOCK.getMessage() + JSONs.toStr(noStockSku),
                     ResultCodeEnum.ORDER_ITEM_NO_STOCK.getCode()
-                    );
+            );
             throw exception;
         }
 
@@ -211,9 +218,9 @@ public class OrderBizServiceImpl implements OrderBizService {
                     return !item.getOrderPrice().equals(price.getData());
                 }).map(item -> item.getSkuName())
                 .collect(Collectors.toList());
-        if(priceChangeSku!=null && priceChangeSku.size()>0){
+        if (priceChangeSku != null && priceChangeSku.size() > 0) {
             GmallException exception = new GmallException(
-                    ResultCodeEnum.ORDER_ITEM_PRICE_CHANGE.getMessage()+ JSONs.toStr(priceChangeSku),
+                    ResultCodeEnum.ORDER_ITEM_PRICE_CHANGE.getMessage() + JSONs.toStr(priceChangeSku),
                     ResultCodeEnum.ORDER_ITEM_PRICE_CHANGE.getCode()
             );
             throw exception;
@@ -231,7 +238,7 @@ public class OrderBizServiceImpl implements OrderBizService {
 
 
         //4、保存订单： 事务的方法一定要动态代理调用; 事务失效的1x大场景
-        OrderInfo info =  orderBizService.saveOrder(tradeNo, order);
+        OrderInfo info = orderBizService.saveOrder(tradeNo, order);
 
         //5、删除购物车中这个商品。
         cartFeignClient.deleteChecked();
@@ -255,12 +262,12 @@ public class OrderBizServiceImpl implements OrderBizService {
 
         //5、发送消息给MQ； //orderId、userId、totalAmout、status
         OrderCreateMsg msg = prepareOrderMsg(info);
-        rabbitTemplate.convertAndSend(MqConst.EXCHANGE_ORDER_EVENT,MqConst.RK_ORDER_CREATE,JSONs.toStr(msg));
+        rabbitTemplate.convertAndSend(MqConst.EXCHANGE_ORDER_EVENT, MqConst.RK_ORDER_CREATE, JSONs.toStr(msg));
         return info.getId(); //"返回订单id";
     }
 
     private OrderCreateMsg prepareOrderMsg(OrderInfo info) {
-        return  new OrderCreateMsg(info.getId(),info.getUserId(),info.getTotalAmount(),info.getOrderStatus());
+        return new OrderCreateMsg(info.getId(), info.getUserId(), info.getTotalAmount(), info.getOrderStatus());
     }
 
 //    @Scheduled(cron = "* */30 * * * ?")
@@ -270,13 +277,13 @@ public class OrderBizServiceImpl implements OrderBizService {
 
     @Transactional //事务在异步情况下用不了
     @Override
-    public OrderInfo saveOrder(String tradeNo,OrderSubmitVo order) {
+    public OrderInfo saveOrder(String tradeNo, OrderSubmitVo order) {
         //1、订单信息保存
-        OrderInfo orderInfo = prepareOrderInfo(tradeNo,order);
+        OrderInfo orderInfo = prepareOrderInfo(tradeNo, order);
         orderInfoService.save(orderInfo);
 
         //2、订单明细保存
-        orderInfoService.saveDetail(orderInfo,order); //新：外面不影响里面，但是里面会影响外面
+        orderInfoService.saveDetail(orderInfo, order); //新：外面不影响里面，但是里面会影响外面
 
 
         //3、订单日志记录
@@ -292,11 +299,149 @@ public class OrderBizServiceImpl implements OrderBizService {
         ProcessStatus closeStatus = ProcessStatus.CLOSED;
 
         //1、修改订单状态为已关闭
-        orderInfoService.updateOrderStatus(orderId,userId,
-                closeStatus.getOrderStatus().name(),closeStatus.name(),ProcessStatus.UNPAID.name());
+        orderInfoService.updateOrderStatus(orderId, userId,
+                closeStatus.getOrderStatus().name(), closeStatus.name(), ProcessStatus.UNPAID.name());
 
 
     }
+
+    @Transactional
+    @Override
+    public List<OrderSplitRespVo> splitOrder(OrderSpiltVo vo) {
+        List<OrderSplitRespVo> result = new ArrayList<>();
+        //1、查询当前父订单以及详情
+        OrderInfo orderInfo = orderInfoService
+                .getOrderInfoAndDetails(Long.parseLong(vo.getOrderId()), Long.parseLong(vo.getUserId()));
+
+        //2、按照库存分布拆分出新单
+        String skuMapJson = vo.getWareSkuMap();
+        //3、得到库存分布信息
+        List<WareFenBuVo> fenBuVos = JSONs.toObj(skuMapJson, new TypeReference<List<WareFenBuVo>>() {
+        });
+
+        //4、按照仓库拆单
+        for (WareFenBuVo buVo : fenBuVos) {
+            //保存子订单
+            OrderSplitRespVo order = saveChildOrder(orderInfo, buVo);
+            result.add(order);
+        }
+
+        //5、父单改为已拆分状态
+        ProcessStatus split = ProcessStatus.SPLIT;
+        //也会推进日志
+        orderInfoService.updateOrderStatus(orderInfo.getId(),
+                orderInfo.getUserId(),
+                split.getOrderStatus().name(),
+                split.name(),
+                ProcessStatus.PAID.name());
+
+
+        return result;
+    }
+
+    @Transactional
+    @Override
+    public OrderSplitRespVo saveChildOrder(OrderInfo orderInfo, WareFenBuVo buVo) {
+        //1、准备子订单
+        OrderInfo childOrder = prepareChildOrder(orderInfo,buVo);
+
+        //2、保存子订单 order_info
+        orderInfoService.save(childOrder);
+
+        //3、保存子订单详情
+        List<OrderDetail> detailList =
+        childOrder.getOrderDetailList().stream().map(item->{
+            item.setOrderId(childOrder.getId()); //设置号子单id即可
+            return item;
+        }).collect(Collectors.toList());
+        orderDetailService.saveBatch(detailList);
+
+
+        //4、准备返回
+        return prepareOrderSplitRespVo(childOrder);
+
+    }
+
+    private OrderSplitRespVo prepareOrderSplitRespVo(OrderInfo childOrder) {
+        OrderSplitRespVo respVo = new OrderSplitRespVo();
+        respVo.setOrderId(childOrder.getId()+"");
+        respVo.setConsignee(childOrder.getConsignee());
+        respVo.setConsigneeTel(childOrder.getConsigneeTel());
+        respVo.setOrderComment(childOrder.getOrderComment());
+        respVo.setOrderBody(childOrder.getTradeBody());
+        respVo.setDeliveryAddress(childOrder.getDeliveryAddress());
+        respVo.setPaymentWay("2");
+        respVo.setWareId(childOrder.getWareId());
+
+        //子单负责的所有商品详情
+        //List<WareStockDetail>
+        List<WareStockDetail> details = childOrder.getOrderDetailList().stream()
+                .map(item -> new WareStockDetail(item.getSkuId(), item.getSkuNum(), item.getSkuName()))
+                .collect(Collectors.toList());
+        respVo.setDetails(details);
+
+        return respVo;
+    }
+
+    private OrderInfo prepareChildOrder(OrderInfo orderInfo, WareFenBuVo buVo) {
+        OrderInfo childOrder = new OrderInfo();
+
+        //设置订单详情；
+        Set<String> skuIds = buVo.getSkuIds().stream().collect(Collectors.toSet());
+        //获取总单中子订单负责的商品
+        List<OrderDetail> orderDetails = orderInfo.getOrderDetailList().stream()
+                .filter(item -> skuIds.contains(item.getSkuId().toString()))
+                .collect(Collectors.toList());
+        //得到当前子订单负责的商品
+        childOrder.setOrderDetailList(orderDetails);
+
+        childOrder.setConsignee(orderInfo.getConsignee());
+        childOrder.setConsigneeTel(orderInfo.getConsigneeTel());
+
+        //拆单后包含的商品的总额
+        BigDecimal total = orderDetails.stream()
+                .map(item -> item.getOrderPrice().multiply(new BigDecimal(item.getSkuNum())))
+                .reduce((o1, o2) -> o1.add(o2))
+                .get();
+        childOrder.setTotalAmount(total);
+
+
+        //每个子单自己购买的商品的名字
+        childOrder.setTradeBody(orderDetails.get(0).getSkuName());
+        //每个子单自己购买的商品的图片
+        childOrder.setImgUrl(orderDetails.get(0).getImgUrl());
+        //子单拆分的时间
+        childOrder.setCreateTime(new Date());
+
+        //子单涉及到的商品原始总额
+        childOrder.setOriginalTotalAmount(new BigDecimal("0"));
+        //子单每个商品自己的优惠额
+        childOrder.setActivityReduceAmount(new BigDecimal("0"));
+        childOrder.setCouponAmount(new BigDecimal("0"));
+
+        //每个子单最终配送以后会有自己的物流号
+        childOrder.setTrackingNo("");
+
+        childOrder.setOperateTime(new Date());
+
+        childOrder.setOrderStatus(orderInfo.getOrderStatus());
+        childOrder.setUserId(orderInfo.getUserId());
+        childOrder.setPaymentWay(orderInfo.getPaymentWay());
+        childOrder.setDeliveryAddress(orderInfo.getDeliveryAddress());
+        childOrder.setOrderComment(orderInfo.getOrderComment());
+        childOrder.setOutTradeNo(orderInfo.getOutTradeNo());
+        childOrder.setExpireTime(orderInfo.getExpireTime());
+        childOrder.setProcessStatus(orderInfo.getProcessStatus());
+        childOrder.setParentOrderId(orderInfo.getParentOrderId());
+        childOrder.setWareId(buVo.getWareId());
+        childOrder.setRefundableTime(orderInfo.getRefundableTime());
+        childOrder.setFeightFee(new BigDecimal("0"));
+
+
+
+        return childOrder;
+    }
+
 
     private OrderStatusLog prepareOrderStatusLog(OrderInfo orderInfo) {
         Long userId = AuthContextHolder.getUserAuth().getUserId();
@@ -309,7 +454,7 @@ public class OrderBizServiceImpl implements OrderBizService {
     }
 
     //准备订单数据
-    private OrderInfo prepareOrderInfo(String tradeNo,OrderSubmitVo vo) {
+    private OrderInfo prepareOrderInfo(String tradeNo, OrderSubmitVo vo) {
         OrderInfo orderInfo = new OrderInfo();
         orderInfo.setConsignee(vo.getConsignee());
         orderInfo.setConsigneeTel(vo.getConsigneeTel());
@@ -334,7 +479,7 @@ public class OrderBizServiceImpl implements OrderBizService {
         orderInfo.setOrderComment(vo.getOrderComment());
 
         //对外交易号；流水号    8+32+10  8byte*8bit;  1000000000
-        orderInfo.setOutTradeNo("ATGUIGU_"+tradeNo+"_"+userId);
+        orderInfo.setOutTradeNo("ATGUIGU_" + tradeNo + "_" + userId);
 
 
         //交易body：购买了那些商品名字
@@ -349,7 +494,7 @@ public class OrderBizServiceImpl implements OrderBizService {
         orderInfo.setCreateTime(new Date());
 
         //过期时间； 订单30min；不支付，就会被取消。
-        Long m = new Date().getTime()+1000*60*30L;
+        Long m = new Date().getTime() + 1000 * 60 * 30L;
         Date date = new Date(m);
         orderInfo.setExpireTime(date);
 
@@ -391,7 +536,6 @@ public class OrderBizServiceImpl implements OrderBizService {
 
         //操作时间
         orderInfo.setOperateTime(new Date());
-
 
 
         return orderInfo;

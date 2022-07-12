@@ -23,5 +23,9 @@ public class AliPayRestController {
         String html = alipayService.generatePayPage(orderId);
         //要给前端展示一个支付宝二维码收银台
         return html;
+
     }
+
+
+
 }

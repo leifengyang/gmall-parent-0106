@@ -13,6 +13,10 @@ public class DateUtil {
 
     private static final String dateFormat = "yyyy-MM-dd";
 
+    public static String formatDate(Date expireTime, String pattern) {
+       return  new SimpleDateFormat(pattern).format(expireTime);
+    }
+
     /**
      * 获取两个时间差 单位：秒
      * @param date1

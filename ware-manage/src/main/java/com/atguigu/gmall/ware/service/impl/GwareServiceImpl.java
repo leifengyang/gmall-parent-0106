@@ -200,6 +200,7 @@ public class GwareServiceImpl implements GwareService {
             String jsonString = JSON.toJSONString(wareSkuMapList);
             Map<String, String> map = new HashMap<>();
             map.put("orderId", wareOrderTask.getOrderId());
+            map.put("userId",wareOrderTask.getUserId().toString());
             map.put("wareSkuMap", jsonString);
             // http://order.gmall.com/orderSplit?orderId=xxx&wareSkuMap=xxx
             String resultJson = HttpclientUtil.doPost(ORDER_URL, map);
@@ -249,9 +250,11 @@ public class GwareServiceImpl implements GwareService {
     }
 
     public void sendSkuDeductMQ(WareOrderTask wareOrderTask) {
+        Long userId = wareOrderTask.getUserId();
         Map<String, Object> map = new HashMap<>();
         map.put("orderId", wareOrderTask.getOrderId());
         map.put("status", wareOrderTask.getTaskStatus().toString());
+        map.put("userId",userId);
         this.sendMessage(MqConst.EXCHANGE_DIRECT_WARE_ORDER, MqConst.ROUTING_WARE_ORDER, JSON.toJSONString(map));
     }
 

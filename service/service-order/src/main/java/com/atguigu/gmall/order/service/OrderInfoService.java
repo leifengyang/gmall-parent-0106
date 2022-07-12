@@ -4,6 +4,8 @@ import com.atguigu.gmall.model.order.OrderInfo;
 import com.atguigu.gmall.model.vo.order.OrderSubmitVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.Map;
+
 /**
 * @author lfy
 * @description 针对表【order_info(订单表 订单表)】的数据库操作Service
@@ -26,7 +28,7 @@ public interface OrderInfoService extends IService<OrderInfo> {
      * @param orderStatus
      * @param processStatus
      */
-    void updateOrderStatus(Long orderId,
+    long updateOrderStatus(Long orderId,
                            Long userId,
                            String orderStatus,
                            String processStatus,
@@ -38,4 +40,18 @@ public interface OrderInfoService extends IService<OrderInfo> {
      * @return
      */
     OrderInfo getOrderInfoByIdAndUserId(Long id);
+
+    /**
+     * 修改订单为已支付
+     * @param map
+     */
+    void orderPayedStatusChange(Map<String, String> map);
+
+    /**
+     * 获取指定用户指定订单的详细信息（order_info，order_detail）
+     * @param orderId
+     * @param userId
+     * @return
+     */
+    OrderInfo getOrderInfoAndDetails(Long orderId, Long userId);
 }

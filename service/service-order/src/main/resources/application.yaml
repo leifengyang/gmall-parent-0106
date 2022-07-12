@@ -18,6 +18,7 @@ spring:
       type: simple
       simple:
         acknowledge-mode: manual  #手动确认
+        prefetch: 16  #每次12个处理完以后，再拿12个， 300
 
 
 

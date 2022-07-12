@@ -2,8 +2,11 @@ package com.atguigu.gmall.pay.service.impl;
 
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
+import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.alipay.api.response.AlipayTradePagePayResponse;
+import com.atguigu.gmall.common.util.AuthContextHolder;
+import com.atguigu.gmall.common.util.DateUtil;
 import com.atguigu.gmall.common.util.JSONs;
 import com.atguigu.gmall.feign.order.OrderFeignClient;
 import com.atguigu.gmall.model.order.OrderInfo;
@@ -47,6 +50,14 @@ public class PayServiceImpl implements PayService {
         //订单名称
         body.put("subject",orderInfo.getTradeBody().split("<br/>")[0]);
         body.put("product_code","FAST_INSTANT_TRADE_PAY");
+        //自动收单（收单以后的订单就不能支付了） time_expire绝对时间 和 timeout_express相对时间
+        String date = DateUtil.formatDate(orderInfo.getExpireTime(), "yyyy-MM-dd HH:mm:ss");
+        body.put("time_expire",date);
+
+        //业务参数
+        Long userId = AuthContextHolder.getUserAuth().getUserId();
+        //TODO 生产环境用这种
+//        body.put("business_params",""+userId);
 
 
 
@@ -62,5 +73,16 @@ public class PayServiceImpl implements PayService {
             return response.getBody();
         }
         return null;
+    }
+
+    @Override
+    public boolean checkSign(Map<String, String> params) throws AlipayApiException {
+
+        boolean checkV1 = AlipaySignature.rsaCheckV1(params,
+                alipayProperties.getAlipayPublicKey(),
+                alipayProperties.getCharset(),
+                alipayProperties.getSignType());
+
+        return checkV1;
     }
 }

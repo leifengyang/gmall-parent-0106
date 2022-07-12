@@ -5,34 +5,35 @@
 <mapper namespace="com.atguigu.gmall.order.mapper.OrderInfoMapper">
 
     <resultMap id="BaseResultMap" type="com.atguigu.gmall.model.order.OrderInfo">
-            <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="consignee" column="consignee" jdbcType="VARCHAR"/>
-            <result property="consigneeTel" column="consignee_tel" jdbcType="VARCHAR"/>
-            <result property="totalAmount" column="total_amount" jdbcType="DECIMAL"/>
-            <result property="orderStatus" column="order_status" jdbcType="VARCHAR"/>
-            <result property="userId" column="user_id" jdbcType="BIGINT"/>
-            <result property="paymentWay" column="payment_way" jdbcType="VARCHAR"/>
-            <result property="deliveryAddress" column="delivery_address" jdbcType="VARCHAR"/>
-            <result property="orderComment" column="order_comment" jdbcType="VARCHAR"/>
-            <result property="outTradeNo" column="out_trade_no" jdbcType="VARCHAR"/>
-            <result property="tradeBody" column="trade_body" jdbcType="VARCHAR"/>
-            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-            <result property="expireTime" column="expire_time" jdbcType="TIMESTAMP"/>
-            <result property="processStatus" column="process_status" jdbcType="VARCHAR"/>
-            <result property="trackingNo" column="tracking_no" jdbcType="VARCHAR"/>
-            <result property="parentOrderId" column="parent_order_id" jdbcType="BIGINT"/>
-            <result property="imgUrl" column="img_url" jdbcType="VARCHAR"/>
-            <result property="provinceId" column="province_id" jdbcType="BIGINT"/>
-            <result property="operateTime" column="operate_time" jdbcType="TIMESTAMP"/>
-            <result property="activityReduceAmount" column="activity_reduce_amount" jdbcType="DECIMAL"/>
-            <result property="couponAmount" column="coupon_amount" jdbcType="DECIMAL"/>
-            <result property="originalTotalAmount" column="original_total_amount" jdbcType="DECIMAL"/>
-            <result property="feightFee" column="feight_fee" jdbcType="DECIMAL"/>
-            <result property="refundableTime" column="refundable_time" jdbcType="TIMESTAMP"/>
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="consignee" column="consignee" jdbcType="VARCHAR"/>
+        <result property="consigneeTel" column="consignee_tel" jdbcType="VARCHAR"/>
+        <result property="totalAmount" column="total_amount" jdbcType="DECIMAL"/>
+        <result property="orderStatus" column="order_status" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="paymentWay" column="payment_way" jdbcType="VARCHAR"/>
+        <result property="deliveryAddress" column="delivery_address" jdbcType="VARCHAR"/>
+        <result property="orderComment" column="order_comment" jdbcType="VARCHAR"/>
+        <result property="outTradeNo" column="out_trade_no" jdbcType="VARCHAR"/>
+        <result property="tradeBody" column="trade_body" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="expireTime" column="expire_time" jdbcType="TIMESTAMP"/>
+        <result property="processStatus" column="process_status" jdbcType="VARCHAR"/>
+        <result property="trackingNo" column="tracking_no" jdbcType="VARCHAR"/>
+        <result property="parentOrderId" column="parent_order_id" jdbcType="BIGINT"/>
+        <result property="imgUrl" column="img_url" jdbcType="VARCHAR"/>
+        <result property="provinceId" column="province_id" jdbcType="BIGINT"/>
+        <result property="operateTime" column="operate_time" jdbcType="TIMESTAMP"/>
+        <result property="activityReduceAmount" column="activity_reduce_amount" jdbcType="DECIMAL"/>
+        <result property="couponAmount" column="coupon_amount" jdbcType="DECIMAL"/>
+        <result property="originalTotalAmount" column="original_total_amount" jdbcType="DECIMAL"/>
+        <result property="feightFee" column="feight_fee" jdbcType="DECIMAL"/>
+        <result property="refundableTime" column="refundable_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,consignee,consignee_tel,
+        id
+        ,consignee,consignee_tel,
         total_amount,order_status,user_id,
         payment_way,delivery_address,order_comment,
         out_trade_no,trade_body,create_time,
@@ -43,8 +44,49 @@
     </sql>
 
     <update id="updateOrderStatus">
-        update order_info set process_status=#{processStatus},
-                              order_status=#{orderStatus}
-        where id=#{orderId} and user_id=#{userId} and order_status=#{expectStatus}
+        update order_info
+        set process_status=#{processStatus},
+            order_status=#{orderStatus}
+        where id = #{orderId}
+          and user_id = #{userId}
+          and order_status = #{expectStatus}
     </update>
+
+    <update id="updateOrderStatusInExpects">
+        update order_info set process_status=#{processStatus},
+        order_status=#{orderStatus}
+        where id=#{id} and user_id=#{userId} and order_status IN (
+        <foreach collection="expectStatus" item="curStatus" separator=",">
+            #{curStatus}
+        </foreach>
+        )
+    </update>
+
+
+    <resultMap id="OrderInfoResultMap" type="com.atguigu.gmall.model.order.OrderInfo" autoMapping="true">
+        <id column="id" property="id"></id>
+        <collection property="orderDetailList" ofType="com.atguigu.gmall.model.order.OrderDetail"
+                    autoMapping="true">
+            <id property="id" column="did"></id>
+        </collection>
+    </resultMap>
+
+    <select id="getOrderInfoAndDetails" resultMap="OrderInfoResultMap">
+        select oi.*,
+               od.id did,
+               od.order_id,
+               od.sku_id,
+               od.sku_name,
+               od.img_url,
+               od.order_price,
+               od.sku_num,
+               od.create_time,
+               od.split_total_amount,
+               od.split_activity_amount,
+               od.split_coupon_amount
+        from order_info oi
+                 left join order_detail od on od.order_id = oi.id and od.user_id = oi.user_id
+        where oi.id = #{orderId}
+          and oi.user_id = #{userId}
+    </select>
 </mapper>

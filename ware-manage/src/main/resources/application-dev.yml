@@ -21,12 +21,15 @@ spring:
     port: 5672
     username: admin
     password: admin
-    publisher-confirms: true
+    publisher-confirm-type: correlated
     publisher-returns: true
     listener:
+      type: simple
       simple:
         acknowledge-mode: manual
         prefetch: 1 # 消费者每次从队列获取的消息数量。此属性当不设置时为：轮询分发，设置为1为：公平分发
+
+
   redis:
     host: 192.168.200.100
     port: 6379
@@ -59,4 +62,4 @@ spring:
 
 order:
   split:
-    url: http://localhost:8204/api/order/orderSplit
+    url: http://api.gmall.com/api/order/orderSplit  #远程调用订单服务，保存库存帮你拆好单的结果。

@@ -42,7 +42,7 @@ spring:
         - id: pay_route
           uri: lb://service-pay
           predicates:
-            - Path=/api/payment/**
+            - Path=/api/payment/**,/rpcapi/payment/**
 
         - id: front_route    #所有 域名的请求都来到 web-front 前端
           uri: lb://web-front
