@@ -44,6 +44,11 @@ spring:
           predicates:
             - Path=/api/payment/**,/rpcapi/payment/**
 
+        - id: seckill_route
+          uri: lb://service-seckill
+          predicates:
+            - Path=/api/activity/seckill/**
+
         - id: front_route    #所有 域名的请求都来到 web-front 前端
           uri: lb://web-front
           predicates:

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.gmall.seckill.mapper.SeckillGoodsMapper">
+
+    <resultMap id="BaseResultMap" type="com.atguigu.gmall.model.activity.SeckillGoods">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="spuId" column="spu_id" jdbcType="BIGINT"/>
+        <result property="skuId" column="sku_id" jdbcType="BIGINT"/>
+        <result property="skuName" column="sku_name" jdbcType="VARCHAR"/>
+        <result property="skuDefaultImg" column="sku_default_img" jdbcType="VARCHAR"/>
+        <result property="price" column="price" jdbcType="DECIMAL"/>
+        <result property="costPrice" column="cost_price" jdbcType="DECIMAL"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="checkTime" column="check_time" jdbcType="TIMESTAMP"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
+        <result property="endTime" column="end_time" jdbcType="TIMESTAMP"/>
+        <result property="num" column="num" jdbcType="INTEGER"/>
+        <result property="stockCount" column="stock_count" jdbcType="INTEGER"/>
+        <result property="skuDesc" column="sku_desc" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        ,spu_id,sku_id,
+        sku_name,sku_default_img,price,
+        cost_price,create_time,check_time,
+        status,start_time,end_time,
+        num,stock_count,sku_desc
+    </sql>
+
+    <update id="updateSeckillStockCount">
+        update seckill_goods
+        set stock_count=stock_count - #{num}
+        where sku_id = #{skuId}
+    </update>
+
+    <select id="getDaySeckillGoods" resultType="com.atguigu.gmall.model.activity.SeckillGoods">
+        select *
+        from seckill_goods
+        where DATE_FORMAT(start_time, '%Y-%m-%d') &lt;= #{day}
+          and DATE_FORMAT(end_time, '%Y-%m-%d') &gt;= #{day}
+    </select>
+</mapper>

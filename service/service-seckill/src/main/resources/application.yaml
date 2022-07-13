@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    url: jdbc:mysql://192.168.200.100:3306/gmall_activity?useSSL=false&characterEncoding=utf-8
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
+
+  rabbitmq:
+    host: 192.168.200.100
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: /
+    publisher-confirm-type: correlated   #发送端确认的方式：关联方式，错误的消息，必须通知publisher
+    publisher-returns: true   #发送返回true，服务器只要收到消息了就通知发送方。
+    listener:
+      type: simple
+      simple:
+        acknowledge-mode: manual  #手动确认
+        prefetch: 16  #每次12个处理完以后，再拿12个， 300
+
+
+server:
+  port: 16000
+
+

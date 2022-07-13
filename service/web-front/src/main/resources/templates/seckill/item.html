@@ -569,9 +569,15 @@
             queue() {
 				//	获取下单码
                 seckill.getSeckillSkuIdStr(this.skuId).then(response => {
-                	//	这个 skuIdStr 就是下单码
-                    var skuIdStr = response.data.data
-                    window.location.href = '/seckill/queue.html?skuId='+this.skuId+'&skuIdStr='+skuIdStr
+					if(response.data.code == 200){
+						//	这个 skuIdStr 就是下单码
+						var skuIdStr = response.data.data
+						window.location.href = '/seckill/queue.html?skuId='+this.skuId+'&skuIdStr='+skuIdStr
+					}else {
+						alert(response.data.message);
+					}
+
+
                 })
             },
 
